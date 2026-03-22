@@ -2,6 +2,10 @@ import type { CollectionConfig } from 'payload'
 
 export const Players: CollectionConfig = {
   slug: 'players',
+  access: {
+    // Allow public read access so the squad page can fetch players without auth
+    read: () => true,
+  },
   admin: {
     useAsTitle: 'name',
     components: {
