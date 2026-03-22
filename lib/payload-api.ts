@@ -39,10 +39,10 @@ function resolveImageUrl(doc: PayloadPlayerDoc): string {
 
 /** Fetches players from Payload CMS REST API */
 export async function getPayloadPlayers(): Promise<Player[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000/'
 
   try {
-    const res = await fetch(`${baseUrl}/api/players?limit=100&sort=number`, {
+    const res = await fetch(`${baseUrl}api/players?limit=100&sort=number`, {
       next: { revalidate: 60 },
     })
 
