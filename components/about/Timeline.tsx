@@ -107,7 +107,7 @@ function TimelineItem({
   );
 }
 
-export default function Timeline({ events }: TimelineProps) {
+const Timeline = ({ events }: TimelineProps) => {
   return (
     <div className="relative max-w-5xl mx-auto">
       {/* Vertical line - Desktop: center, Mobile: left (20px = half of w-10) */}
@@ -126,4 +126,6 @@ export default function Timeline({ events }: TimelineProps) {
       </div>
     </div>
   );
-}
+};
+
+export default Timeline;

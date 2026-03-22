@@ -1,42 +1,127 @@
 import { Player, players as localPlayers, Position } from "@/data/players";
 
-// You can find the team ID for Nam Dinh FC on the API-Football dashboard.
-// We'll define a default ID here (you may need to verify or change it).
-const DEFAULT_NAM_DINH_TEAM_ID = 5734; // Placeholder ID.
+// --- API Response Interfaces ---
 
+interface ApiPlayerInfo {
+  id: number;
+  name: string;
+  age: number;
+  number: number | null;
+  position: string;
+  photo: string;
+  nationality: string;
+}
+
+interface ApiGamesStats {
+  appearences: number | null;
+  position: string | null;
+  number: number | null;
+}
+
+interface ApiGoalsStats {
+  total: number | null;
+  assists: number | null;
+}
+
+interface ApiPlayerStatistics {
+  games: ApiGamesStats;
+  goals: ApiGoalsStats;
+}
+
+interface ApiPlayerResponse {
+  player: ApiPlayerInfo;
+  statistics: ApiPlayerStatistics[];
+}
+
+interface ApiPaging {
+  current: number;
+  total: number;
+}
+
+interface ApiFootballResponse {
+  response: ApiPlayerResponse[];
+  paging: ApiPaging;
+  errors?: Record<string, string>;
+}
+
+// --- Constants ---
+
+const DEFAULT_NAM_DINH_TEAM_ID = 5734;
+
+// --- Helper functions ---
+
+/** Maps API position string to our internal Position type */
+function mapPosition(apiPlayer: ApiPlayerInfo, apiStats: ApiPlayerStatistics | null): Position {
+  const apiPos = (apiPlayer.position || apiStats?.games?.position || "").toLowerCase();
+  if (apiPos.includes("goalkeeper")) return "goalkeeper";
+  if (apiPos.includes("defender") || apiPos.includes("back")) return "defender";
+  if (apiPos.includes("attacker") || apiPos.includes("forward") || apiPos.includes("striker")) return "forward";
+  return "midfielder";
+}
+
+/** Maps a single API player response to our Player interface */
+function mapApiPlayerToPlayer(item: ApiPlayerResponse): Player {
+  const { player: apiPlayer, statistics } = item;
+  const apiStats = statistics?.length > 0 ? statistics[0] : null;
+
+  const appearances = apiStats?.games?.appearences ?? 0;
+  const goals = apiStats?.goals?.total ?? 0;
+  const assists = apiStats?.goals?.assists ?? 0;
+  const playerNumber = apiPlayer.number ?? apiStats?.games?.number ?? 0;
+  const nationality =
+    apiPlayer.nationality && apiPlayer.nationality !== "Unknown"
+      ? apiPlayer.nationality
+      : "Việt Nam";
+
+  const isFeatured =
+    localPlayers.find(
+      (p) => p.name.includes(apiPlayer.name) || apiPlayer.name.includes(p.name)
+    )?.isFeatured ?? false;
+
+  return {
+    id: `api-${apiPlayer.id}`,
+    name: apiPlayer.name,
+    slug: apiPlayer.name.toLowerCase().replace(/\s+/g, "-"),
+    number: playerNumber,
+    position: mapPosition(apiPlayer, apiStats),
+    nationality,
+    age: apiPlayer.age ?? 0,
+    image: apiPlayer.photo,
+    stats: { appearances, goals, assists },
+    isFeatured,
+  } as Player;
+}
+
+// --- Main export ---
+
+/** Fetches squad data from API-Football, falls back to local static data if unavailable */
 export async function getSquadData(): Promise<Player[]> {
   const apiKey = process.env.API_FOOTBALL_KEY;
   const teamId = process.env.API_FOOTBALL_TEAM_ID || DEFAULT_NAM_DINH_TEAM_ID;
-  const season = process.env.API_FOOTBALL_SEASON || 2024; // Default to 2023 season
+  const season = process.env.API_FOOTBALL_SEASON || 2024;
 
-  // If no API key is provided, fallback to the static local data
   if (!apiKey) {
-    console.warn("API_FOOTBALL_KEY is missing. Falling back to local players data.");
     return localPlayers;
   }
 
   try {
-    let allPlayers: any[] = [];
+    let allPlayers: ApiPlayerResponse[] = [];
     let page = 1;
     let totalPages = 1;
 
     do {
       const res = await fetch(
         `https://v3.football.api-sports.io/players?team=${teamId}&season=${season}&page=${page}`,
-        {
-          headers: {
-            "x-apisports-key": apiKey,
-          },
-          // next: { revalidate: 86400 },
-        }
+        { headers: { "x-apisports-key": apiKey } }
       );
+
       if (!res.ok) {
         throw new Error(`API-Football responded with status: ${res.status}`);
       }
 
-      const json = await res.json();
+      const json: ApiFootballResponse = await res.json();
 
-      if (json.errors && json.errors.requests) {
+      if (json.errors?.requests) {
         throw new Error(json.errors.requests);
       }
 
@@ -44,68 +129,18 @@ export async function getSquadData(): Promise<Player[]> {
         allPlayers = allPlayers.concat(json.response);
       }
 
-      totalPages = json.paging?.total || 1;
+      totalPages = json.paging?.total ?? 1;
       page++;
     } while (page <= totalPages);
 
     if (allPlayers.length === 0) {
-      console.warn("No detailed player data found for the given team ID. Falling back to local players data.");
       return localPlayers;
     }
 
-    // Map the API data to our local Player interface
-    const mappedPlayers: Player[] = allPlayers.map((item: any) => {
-      const apiPlayer = item.player;
-      const apiStats = item.statistics && item.statistics.length > 0 ? item.statistics[0] : null;
-      console.log(item.statistics);
-      // Map API positions to our Position type
-      let mappedPosition: Position = "midfielder";
-      const apiPos = apiPlayer.position
-        ? apiPlayer.position.toLowerCase()
-        : (apiStats?.games?.position ? apiStats.games.position.toLowerCase() : "");
-
-      if (apiPos.includes("goalkeeper")) mappedPosition = "goalkeeper";
-      else if (apiPos.includes("defender") || apiPos.includes("back")) mappedPosition = "defender";
-      else if (apiPos.includes("attacker") || apiPos.includes("forward") || apiPos.includes("striker")) mappedPosition = "forward";
-
-      let appearances = 0;
-      let goals = 0;
-      let assists = 0;
-
-      if (apiStats) {
-        appearances = apiStats.games?.appearences || 0;
-        goals = apiStats.goals?.total || 0;
-        assists = apiStats.goals?.assists || 0;
-      }
-
-      const playerNumber = apiPlayer.number !== null
-        ? apiPlayer.number
-        : (apiStats?.games?.number || 0);
-
-      // Create a safely fallback for nationality
-      const nationality = apiPlayer.nationality && apiPlayer.nationality !== "Unknown"
-        ? apiPlayer.nationality
-        : "Việt Nam";
-
-      return {
-        id: `api-${apiPlayer.id}`,
-        name: apiPlayer.name,
-        slug: apiPlayer.name.toLowerCase().replace(/\s+/g, '-'),
-        number: playerNumber,
-        position: mappedPosition,
-        nationality: nationality,
-        age: apiPlayer.age || 0,
-        image: apiPlayer.photo,
-        stats: { appearances, goals, assists },
-        isFeatured: localPlayers.find(p => p.name.includes(apiPlayer.name) || apiPlayer.name.includes(p.name))?.isFeatured || false
-      } as Player;
-    });
-
+    const mappedPlayers = allPlayers.map(mapApiPlayerToPlayer);
     return mappedPlayers.length > 0 ? mappedPlayers : localPlayers;
 
-  } catch (error) {
-    console.error("Failed to fetch detailed player data from API-Football:", error);
-    console.warn("Falling back to local players data.");
+  } catch {
     return localPlayers;
   }
 }

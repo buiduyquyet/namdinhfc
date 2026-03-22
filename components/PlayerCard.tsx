@@ -6,7 +6,7 @@ interface PlayerCardProps {
     index?: number;
 }
 
-export default function PlayerCard({ player, index = 0 }: PlayerCardProps) {
+const PlayerCard = ({ player, index = 0 }: PlayerCardProps) => {
     return (
         <div
             className="group relative overflow-hidden cursor-pointer animate-fade-in-up bg-linear-to-br from-primary to-primary-dark rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
@@ -96,4 +96,6 @@ export default function PlayerCard({ player, index = 0 }: PlayerCardProps) {
             </div>
         </div>
     );
-}
+};
+
+export default PlayerCard;

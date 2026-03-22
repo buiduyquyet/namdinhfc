@@ -19,7 +19,7 @@ interface ClubHistoryProps {
   clubInfo: ClubInfo;
 }
 
-export default function ClubHistory({ clubStats, clubInfo }: ClubHistoryProps) {
+const ClubHistory = ({ clubStats, clubInfo }: ClubHistoryProps) => {
   return (
     <section className="py-16 md:py-24 bg-gray-50">
       <div className="container">
@@ -88,4 +88,6 @@ export default function ClubHistory({ clubStats, clubInfo }: ClubHistoryProps) {
       </div>
     </section>
   );
-}
+};
+
+export default ClubHistory;

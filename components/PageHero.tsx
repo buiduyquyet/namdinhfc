@@ -10,7 +10,7 @@ interface PageHeroProps {
   breadcrumbs?: { label: string; href: string }[];
 }
 
-export default function PageHero({ title, subtitle, breadcrumbs }: PageHeroProps) {
+const PageHero = ({ title, subtitle, breadcrumbs }: PageHeroProps) => {
   return (
     <section style={{ paddingTop: "160px", paddingBottom: "80px" }} className="relative overflow-hidden bg-secondary">
       {/* Background patterns */}
@@ -66,4 +66,6 @@ export default function PageHero({ title, subtitle, breadcrumbs }: PageHeroProps
       <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-primary/30 to-transparent"></div>
     </section>
   );
-}
+};
+
+export default PageHero;

@@ -54,10 +54,10 @@ function TeamLogo({ name, size = 40 }: { name: string; size?: number }) {
   );
 }
 
-export default function MatchCard({
+const MatchCard = ({
   match,
   variant = "default",
-}: MatchCardProps) {
+}: MatchCardProps) => {
   const isFeatured = variant === "featured";
   const isFinished = match.status === "finished";
   const isLive = match.status === "live";
@@ -272,4 +272,6 @@ export default function MatchCard({
       </div>
     </div>
   );
-}
+};
+
+export default MatchCard;

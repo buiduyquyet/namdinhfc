@@ -5,12 +5,12 @@ interface SectionTitleProps {
   light?: boolean;
 }
 
-export default function SectionTitle({
+const SectionTitle = ({
   title,
   subtitle,
   align = "center",
   light = false,
-}: SectionTitleProps) {
+}: SectionTitleProps) => {
   return (
     <div
       style={{
@@ -59,4 +59,6 @@ export default function SectionTitle({
       )}
     </div>
   );
-}
+};
+
+export default SectionTitle;

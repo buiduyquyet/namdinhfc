@@ -61,7 +61,7 @@ function AnimatedNumber({
     );
 }
 
-export default function StatsCounter({ items }: StatsCounterProps) {
+const StatsCounter = ({ items }: StatsCounterProps) => {
     const ref = useRef<HTMLDivElement>(null);
     const [isVisible, setIsVisible] = useState(false);
 
@@ -145,4 +145,6 @@ export default function StatsCounter({ items }: StatsCounterProps) {
       `}</style>
         </div>
     );
-}
+};
+
+export default StatsCounter;

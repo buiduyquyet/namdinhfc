@@ -4,7 +4,7 @@ import LeagueTable from "@/components/LeagueTable";
 import { nextMatch } from "@/data/matches";
 import { leagueTable } from "@/data/league-table";
 
-export default function NextMatchSection() {
+const NextMatchSection = () => {
   if (!nextMatch) return null;
 
   return (
@@ -45,4 +45,6 @@ export default function NextMatchSection() {
       </div>
     </section>
   );
-}
+};
+
+export default NextMatchSection;

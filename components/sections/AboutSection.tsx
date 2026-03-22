@@ -2,7 +2,7 @@ import SectionTitle from "@/components/SectionTitle";
 import SectionBackground from "./SectionBackground";
 import ImageSlider from "@/components/ImageSlider";
 
-export default function AboutSection() {
+const AboutSection = () => {
   const aboutImages = [
     "/cover-bg-2.jpg",
     "/thientruong-stadium-1.jpg",
@@ -48,4 +48,6 @@ export default function AboutSection() {
       </div>
     </section>
   );
-}
+};
+
+export default AboutSection;

@@ -8,10 +8,10 @@ interface PlayerSectionProps {
   players: Player[];
 }
 
-export default function PlayerSection({
+const PlayerSection = ({
   position,
   players,
-}: PlayerSectionProps) {
+}: PlayerSectionProps) => {
   if (players.length === 0) return null;
 
   return (
@@ -35,4 +35,6 @@ export default function PlayerSection({
       </div>
     </section>
   );
-}
+};
+
+export default PlayerSection;

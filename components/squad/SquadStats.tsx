@@ -31,12 +31,12 @@ function StatItem({ value, label, delay = 0 }: StatItemProps) {
   );
 }
 
-export default function SquadStats({
+const SquadStats = ({
   totalPlayers,
   foreignPlayers,
   averageAge,
   totalGoals,
-}: SquadStatsProps) {
+}: SquadStatsProps) => {
   return (
     <section className="bg-secondary py-12 md:py-16 lg:py-20 text-white overflow-hidden relative">
       <div className="container relative z-10">
@@ -53,4 +53,6 @@ export default function SquadStats({
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
     </section>
   );
-}
+};
+
+export default SquadStats;

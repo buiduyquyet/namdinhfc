@@ -20,7 +20,7 @@ const statsItems = [
   },
 ];
 
-export default function StatsSection() {
+const StatsSection = () => {
   return (
     <SectionDark
       title="Con Số Ấn Tượng"
@@ -28,4 +28,6 @@ export default function StatsSection() {
       chidlren={<StatsCounter items={statsItems} />}
     />
   );
-}
+};
+
+export default StatsSection;

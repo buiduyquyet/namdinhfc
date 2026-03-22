@@ -24,7 +24,7 @@ const SOCIAL_LINKS = [
     },
 ];
 
-export default function Footer() {
+const Footer = () => {
     return (
         <footer
             style={{
@@ -325,4 +325,6 @@ export default function Footer() {
       `}</style>
         </footer>
     );
-}
+};
+
+export default Footer;

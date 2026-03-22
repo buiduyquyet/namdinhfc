@@ -30,7 +30,7 @@ const buttonContainerStyles = {
   flexWrap: "wrap" as const,
 };
 
-export default function CTASection() {
+const CTASection = () => {
   return (
     <section
       id="lien-he"
@@ -62,4 +62,6 @@ export default function CTASection() {
       </div>
     </section>
   );
-}
+};
+
+export default CTASection;

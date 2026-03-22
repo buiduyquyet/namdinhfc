@@ -7,12 +7,12 @@ interface SectionTitleProps {
   centered?: boolean;
 }
 
-export default function SectionTitle({
+const SectionTitle = ({
   title,
   highlight,
   subtitle,
   centered = true,
-}: SectionTitleProps) {
+}: SectionTitleProps) => {
   return (
     <div className={`max-w-3xl ${centered ? "mx-auto text-center" : ""} mb-12 md:mb-16`}>
       <h2 className="text-3xl md:text-4xl lg:text-5xl font-black text-secondary uppercase tracking-tight">
@@ -30,4 +30,6 @@ export default function SectionTitle({
       )}
     </div>
   );
-}
+};
+
+export default SectionTitle;

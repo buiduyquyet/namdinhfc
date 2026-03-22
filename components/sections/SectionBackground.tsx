@@ -5,10 +5,10 @@ interface SectionBackgroundProps {
   className?: string;
 }
 
-export default function SectionBackground({
+const SectionBackground = ({
   variant = "full",
   className = "",
-}: SectionBackgroundProps) {
+}: SectionBackgroundProps) => {
   const patterns = {
     dots: (
       <div
@@ -86,4 +86,6 @@ export default function SectionBackground({
       {patterns[variant]}
     </div>
   );
-}
+};
+
+export default SectionBackground;

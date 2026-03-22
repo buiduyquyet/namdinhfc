@@ -1,6 +1,6 @@
 import ImageSlider from "./ImageSlider";
 
-export default function HeroSection() {
+const HeroSection = () => {
   const heroImages = [
     "/cover-bg.jpg",
     "/thientruong-stadium-team.jpg",
@@ -96,4 +96,6 @@ export default function HeroSection() {
       />
     </section>
   );
-}
+};
+
+export default HeroSection;

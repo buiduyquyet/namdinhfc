@@ -12,14 +12,14 @@ interface ImageSliderProps {
   priority?: boolean;
 }
 
-export default function ImageSlider({
+const ImageSlider = ({
   images,
   interval = 5000,
   className = "",
   imageClassName = "",
   style,
   priority = false,
-}: ImageSliderProps) {
+}: ImageSliderProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
@@ -67,4 +67,6 @@ export default function ImageSlider({
       )}
     </div>
   );
-}
+};
+
+export default ImageSlider;

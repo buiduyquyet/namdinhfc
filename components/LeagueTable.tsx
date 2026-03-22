@@ -14,11 +14,11 @@ const formColors = {
   L: "#ef4444", // Red
 };
 
-export default function LeagueTable({
+const LeagueTable = ({
   teams,
   showFullTable = false,
   highlightedTeam = TEAM_NAME,
-}: LeagueTableProps) {
+}: LeagueTableProps) => {
   const displayTeams = showFullTable ? teams : teams?.slice(0, 4);
 
   return (
@@ -311,4 +311,6 @@ export default function LeagueTable({
       </div> */}
     </div>
   );
-}
+};
+
+export default LeagueTable;

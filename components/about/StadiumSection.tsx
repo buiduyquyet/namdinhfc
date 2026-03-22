@@ -13,11 +13,11 @@ interface StadiumSectionProps {
   stats: StadiumStat[];
 }
 
-export default function StadiumSection({
+const StadiumSection = ({
   title,
   subtitle,
   stats,
-}: StadiumSectionProps) {
+}: StadiumSectionProps) => {
   return (
     <section className="py-16 md:py-24 bg-secondary text-white relative overflow-hidden">
       <div className="container relative z-10">
@@ -56,4 +56,6 @@ export default function StadiumSection({
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] md:w-[800px] md:h-[800px] bg-primary/10 rounded-full blur-[100px] md:blur-[120px] pointer-events-none" />
     </section>
   );
-}
+};
+
+export default StadiumSection;

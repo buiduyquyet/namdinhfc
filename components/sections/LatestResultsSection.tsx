@@ -3,7 +3,7 @@ import MatchCard from "@/components/MatchCard";
 import { finishedMatches } from "@/data/matches";
 import Link from "next/link";
 
-export default function LatestResultsSection() {
+const LatestResultsSection = () => {
   const latestResults = finishedMatches.slice(0, 3);
 
   return (
@@ -26,4 +26,6 @@ export default function LatestResultsSection() {
       </div>
     </section>
   );
-}
+};
+
+export default LatestResultsSection;

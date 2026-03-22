@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function SyncButton() {
+const SyncButton = () => {
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
   const router = useRouter()
@@ -22,8 +22,8 @@ export default function SyncButton() {
       } else {
         setMessage(`Lỗi: ${data.error}`)
       }
-    } catch (err: any) {
-      setMessage(`Lỗi hệ thống: ${err.message}`)
+    } catch (err: unknown) {
+      setMessage(`Lỗi hệ thống: ${err instanceof Error ? err.message : String(err)}`)
     }
     setLoading(false)
   }
@@ -55,3 +55,5 @@ export default function SyncButton() {
     </div>
   )
 }
+
+export default SyncButton;
