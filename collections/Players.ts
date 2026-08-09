@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { PLAYER_DATA_SOURCE_OPTIONS } from '@/lib/player-source'
+
 export const Players: CollectionConfig = {
   slug: 'players',
   access: {
@@ -8,9 +10,11 @@ export const Players: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
+    defaultColumns: ['name', 'number', 'position', 'dataSource'],
     components: {
       beforeList: [
         '@/components/admin/SyncButton',
+        '@/components/admin/ImportPlayersButton',
       ],
     }
   },
@@ -26,6 +30,18 @@ export const Players: CollectionConfig = {
     { name: 'nationality', type: 'text', label: 'Quốc tịch', defaultValue: 'Việt Nam' },
     { name: 'image', type: 'upload', relationTo: 'media', label: 'Ảnh đại diện (Upload)' },
     { name: 'imageUrl', type: 'text', label: 'URL Ảnh từ API' },
+    {
+      name: 'dataSource',
+      type: 'select',
+      label: 'Nguồn dữ liệu',
+      required: true,
+      defaultValue: 'manual',
+      options: PLAYER_DATA_SOURCE_OPTIONS,
+      admin: {
+        position: 'sidebar',
+        description: 'Cho biết bản ghi này đến từ đâu. Trang public có thể lọc theo nguồn trong Cấu hình trang.',
+      },
+    },
     {
       name: 'stats',
       type: 'group',

@@ -8,6 +8,7 @@ import { Players } from './collections/Players'
 import { News } from './collections/News'
 import { Matches } from './collections/Matches'
 import { Media } from './collections/Media'
+import { SiteSettings } from './globals/SiteSettings'
 
 import { fileURLToPath } from 'url'
 
@@ -19,6 +20,7 @@ export default buildConfig({
     user: Users.slug,
   },
   collections: [Users, Players, News, Matches, Media],
+  globals: [SiteSettings],
   editor: lexicalEditor({}),
   secret: process.env.PAYLOAD_SECRET || 'a-very-secret-string-for-payload-3.0-namdinhfc',
   db: mongooseAdapter({

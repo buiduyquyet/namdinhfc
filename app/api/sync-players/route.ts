@@ -24,6 +24,7 @@ export async function GET() {
         position: pos as 'Thủ môn' | 'Hậu vệ' | 'Tiền vệ' | 'Tiền đạo',
         nationality: player.nationality || 'Việt Nam',
         imageUrl: typeof player.image === 'string' ? player.image : undefined,
+        dataSource: 'api-football' as const,
         stats: {
           matchesPlayed: player.stats?.appearances || 0,
           goals: player.stats?.goals || 0,

@@ -1,4 +1,5 @@
 import { Player, Position } from '@/data/players'
+import type { PlayerSourceFilter } from '@/lib/player-source'
 
 interface PayloadPlayerDoc {
   id: string | number
@@ -37,12 +38,39 @@ function resolveImageUrl(doc: PayloadPlayerDoc): string {
   return ''
 }
 
-/** Fetches players from Payload CMS REST API */
+function getBaseUrl(): string {
+  return process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000/'
+}
+
+/**
+ * Đọc nguồn dữ liệu cầu thủ đang được chọn trong global "Cấu hình trang".
+ * Trả về `all` nếu global chưa được lưu lần nào hoặc gọi lỗi.
+ */
+export async function getActivePlayerSource(): Promise<PlayerSourceFilter> {
+  try {
+    const res = await fetch(`${getBaseUrl()}api/globals/site-settings`, {
+      next: { revalidate: 60 },
+    })
+
+    if (!res.ok) return 'all'
+
+    const data: { playerDataSource?: PlayerSourceFilter } = await res.json()
+    return data.playerDataSource || 'all'
+  } catch (error) {
+    console.error('Failed to fetch site settings from Payload CMS:', error)
+    return 'all'
+  }
+}
+
+/** Fetches players from Payload CMS REST API, filtered by the configured data source */
 export async function getPayloadPlayers(): Promise<Player[]> {
-  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000/'
+  const baseUrl = getBaseUrl()
 
   try {
-    const res = await fetch(`${baseUrl}api/players?limit=100&sort=number`, {
+    const source = await getActivePlayerSource()
+    const sourceQuery = source === 'all' ? '' : `&where[dataSource][equals]=${source}`
+
+    const res = await fetch(`${baseUrl}api/players?limit=100&sort=number${sourceQuery}`, {
       next: { revalidate: 60 },
     })
 
