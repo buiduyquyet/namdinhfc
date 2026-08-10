@@ -11,9 +11,16 @@ export default async function SquadPage() {
   // Calculate squad statistics
   const totalPlayers = players.length;
   const foreignPlayers = players.filter((p) => p.nationality !== "Việt Nam").length;
-  const averageAge = Math.round(
-    players.reduce((acc, p) => acc + p.age, 0) / players.length
-  );
+
+  // Chỉ tính trung bình trên các cầu thủ đã khai ngày sinh (age > 0),
+  // tránh chia cho 0 khi danh sách rỗng hoặc chưa ai có ngày sinh.
+  const playersWithAge = players.filter((p) => p.age > 0);
+  const averageAge = playersWithAge.length
+    ? Math.round(
+        playersWithAge.reduce((acc, p) => acc + p.age, 0) / playersWithAge.length
+      )
+    : 0;
+
   const totalGoals = players.reduce(
     (acc, p) => acc + (p.stats?.goals || 0),
     0

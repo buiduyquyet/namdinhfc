@@ -1,7 +1,5 @@
-import SectionTitle from "@/components/SectionTitle";
 import StatsCounter from "@/components/StatsCounter";
 import { clubStats } from "@/data/club-info";
-import SectionBackground from "./SectionBackground";
 import SectionDark from "../SectionDark";
 
 const statsItems = [

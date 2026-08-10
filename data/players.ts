@@ -14,6 +14,8 @@ export interface Player {
         appearances: number;
         goals: number;
         assists: number;
+        yellowCards?: number;
+        redCards?: number;
     };
     bio?: string;
 }

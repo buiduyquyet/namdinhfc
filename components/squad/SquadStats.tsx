@@ -43,14 +43,18 @@ const SquadStats = ({
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
           <StatItem value={totalPlayers} label="Tổng số cầu thủ" delay={0} />
           <StatItem value={foreignPlayers} label="Ngoại binh" delay={100} />
-          <StatItem value={averageAge} label="Độ tuổi trung bình" delay={200} />
+          <StatItem
+            value={averageAge > 0 ? averageAge : "—"}
+            label="Độ tuổi trung bình"
+            delay={200}
+          />
           <StatItem value={totalGoals} label="Tổng bàn thắng" delay={300} />
         </div>
       </div>
 
       {/* Background decoration */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+      <div className="absolute top-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-px bg-linear-to-r from-transparent via-white/10 to-transparent" />
     </section>
   );
 };

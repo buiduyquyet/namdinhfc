@@ -48,6 +48,8 @@ const ImportPlayersButton = () => {
   return (
     <div style={{ marginBottom: '1rem', padding: '0 1.25rem' }}>
       <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'end', alignItems: 'center' }}>
+        {/* Đây là route handler trả file .xlsx, không phải page — phải dùng <a> để trình duyệt tải về */}
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a
           href="/api/import-players/template"
           style={{ fontSize: '0.85rem', textDecoration: 'underline' }}

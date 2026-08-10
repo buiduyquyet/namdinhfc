@@ -29,7 +29,13 @@ const SyncButton = () => {
   }
 
   return (
-    <div style={{ marginBottom: '2rem', padding: '1.25rem', borderRadius: '8px', display: 'flex', justifyContent: 'end', alignItems: 'center' }}>
+    <div style={{ marginBottom: '2rem', padding: '1.25rem', borderRadius: '8px', display: 'flex', gap: '1rem', justifyContent: 'end', alignItems: 'center' }}>
+      {message && (
+        <p style={{ margin: 0, color: message.startsWith('Lỗi') ? '#ef4444' : '#10b981', fontWeight: 600 }}>
+          {message}
+        </p>
+      )}
+
       <button
         onClick={handleSync}
         disabled={loading}
@@ -46,12 +52,6 @@ const SyncButton = () => {
       >
         {loading ? 'Đang đồng bộ...' : 'Chạy Đồng Bộ Ngay'}
       </button>
-
-      {/* {message && (
-        <p style={{ marginTop: '1rem', marginBottom: 0, color: message.startsWith('Lỗi') ? '#ef4444' : '#10b981', fontWeight: '600' }}>
-          {message}
-        </p>
-      )} */}
     </div>
   )
 }

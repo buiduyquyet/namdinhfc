@@ -1,0 +1,145 @@
+# CLAUDE.md — Namdinh FC Website
+
+Website chính thức CLB Thép Xanh Nam Định. Next.js 16 (App Router) + Payload CMS 3 (MongoDB) + Tailwind CSS v4.
+
+> **Bắt buộc đọc trước khi code UI:** [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) — design tokens, component inventory, quy ước layout.
+
+---
+
+## 1. Kiến trúc thư mục
+
+```
+app/
+  (main)/            # Route group public — có Header/Footer, dùng globals.css
+    layout.tsx       #   root layout: <html lang="vi">, font Montserrat + Inter, metadata SEO
+    page.tsx         #   trang chủ = ghép các section từ components/sections
+    about/, squad/, contact/
+  (payload)/         # Route group admin — do Payload sinh ra, KHÔNG sửa tay
+    admin/[[...segments]]/page.tsx
+    api/[...slug]/route.ts      # REST + GraphQL của Payload
+  api/               # Route handler nghiệp vụ riêng (không phải của Payload)
+    sync-players/, import-players/
+  globals.css        # Design system duy nhất của toàn site
+
+collections/         # Payload collections: Users, Players, News, Matches, Media
+globals/             # Payload globals: SiteSettings
+lib/                 # Logic không phải React: fetch API, parse Excel, mapping
+data/                # Dữ liệu tĩnh + type domain (Player, Match, LeagueTableEntry…)
+components/          # UI components (xem mục 3)
+public/              # Ảnh tĩnh; `public/media` là nơi Payload lưu file upload
+```
+
+**Alias import:** `@/*` → root. Luôn dùng `@/components/...`, `@/lib/...`, không dùng `../../`.
+
+---
+
+## 2. Rule coding chung
+
+### TypeScript
+- `strict: true`. **Không dùng `any`** — dùng `unknown` rồi narrow:
+  ```ts
+  catch (error: unknown) {
+    const msg = error instanceof Error ? error.message : String(error)
+  }
+  ```
+  (`app/api/sync-players/route.ts` còn 1 chỗ dùng `any` — cần sửa, đừng copy pattern đó.)
+- Type domain đặt trong `data/*.ts` và export cùng file với dữ liệu (`Player` + `players`, `Match` + `matches`).
+- Props component: khai báo `interface XxxProps` ngay trên component, không export trừ khi dùng lại nơi khác.
+
+### Component
+- Mặc định là **Server Component**. Chỉ thêm `"use client"` khi thật sự cần `useState` / `useEffect` / event handler.
+  - Server Component có thể `async` và gọi thẳng `getPayloadPlayers()` — xem `components/sections/FeaturedPlayersSection.tsx`.
+- Khai báo dạng arrow function + `export default` ở cuối file:
+  ```tsx
+  const PlayerCard = ({ player, index = 0 }: PlayerCardProps) => { ... };
+  export default PlayerCard;
+  ```
+  (Server Component async được phép dùng `export default async function`.)
+- **Một component = một file.** Component phụ chỉ dùng nội bộ thì để cùng file (ví dụ `StatItem` trong `SquadStats.tsx`).
+- Component < ~150 dòng. Vượt quá thì tách (như `Header` → `DesktopNav` + `MobileMenu`).
+- Barrel export cho nhóm section: `components/sections/index.ts`.
+
+### Ngôn ngữ
+- **Toàn bộ text hiển thị cho người dùng là tiếng Việt** — bao gồm cả `label` trong Payload collections và message lỗi API.
+- Tên biến / hàm / file: tiếng Anh.
+- Comment: tiếng Việt hoặc tiếng Anh đều được, nhưng comment cho logic nghiệp vụ Việt Nam (parse Excel, mapping vị trí) nên viết tiếng Việt cho khớp file hiện có.
+
+### Data fetching
+- Fetch Payload qua REST API trong `lib/payload-api.ts`, **không** import `getPayload` vào page/component:
+  ```ts
+  fetch(`${baseUrl}api/players?limit=100&sort=number`, { next: { revalidate: 60 } })
+  ```
+- `getPayload({ config })` chỉ dùng trong `app/api/**/route.ts` (server-side write).
+- **Luôn có fallback**: lỗi fetch → `console.error` + trả mảng rỗng / dữ liệu tĩnh, không để page crash (xem `lib/api-football.ts`, `lib/payload-api.ts`).
+- Mapping giữa 2 domain (Payload dùng vị trí tiếng Việt, UI dùng `Position` tiếng Anh) đặt trong `lib/`, không rải trong component.
+
+### API route
+- Route ghi dữ liệu **phải check auth**:
+  ```ts
+  const { user } = await payload.auth({ headers: req.headers })
+  if (!user) return NextResponse.json({ success: false, error: '...' }, { status: 401 })
+  ```
+- Response chuẩn: `{ success: true, ...data }` hoặc `{ success: false, error: string }` + đúng HTTP status.
+- Validate input trước khi chạm DB (đuôi file, dung lượng, kiểu dữ liệu).
+
+### Payload collections
+- Mọi field có `label` tiếng Việt.
+- Collection cần đọc từ trang public → `access: { read: () => true }`.
+- Hằng số option dùng chung giữa collection và UI đặt trong `lib/` (mẫu: `lib/player-source.ts`).
+
+---
+
+## 3. Rule UI/CSS (tóm tắt — chi tiết ở docs/DESIGN_SYSTEM.md)
+
+**Thứ tự ưu tiên khi style, từ trên xuống:**
+
+1. **Class tiện ích trong `globals.css`**: `.container`, `.section`, `.section-alt`, `.btn .btn-primary`, `.card`, `.badge`, `.divider`.
+2. **Tailwind utility** với token đã map: `text-primary`, `bg-secondary`, `font-heading`, `rounded-full`.
+3. **Inline `style={{}}`** — chỉ khi giá trị động (animation delay theo index, gradient phức tạp, `clamp()`).
+
+**Cấm:**
+- ❌ Hardcode màu hex trong component (`#3B82F6`) → dùng `var(--color-primary)` hoặc `text-primary`.
+- ❌ Thêm `<style jsx global>` mới — 3 file hiện có (`Header`, `Footer`, `StatsCounter`) là nợ kỹ thuật, không nhân bản.
+- ❌ Tạo file `.css` rời. Design system chỉ nằm ở `app/globals.css`.
+- ❌ Viết lại `SectionTitle` / `PageHero` / `SectionBackground` — dùng lại component có sẵn.
+
+**Bố cục 1 section chuẩn:**
+```tsx
+<section id="ten-section" className="section">        {/* hoặc .section-alt */}
+  <div className="container">
+    <SectionTitle title="..." subtitle="..." />
+    {/* nội dung */}
+  </div>
+</section>
+```
+Section nền tối/gradient → dùng `<SectionDark>` (bọc sẵn `SectionBackground` + `SectionTitle light`).
+
+**Ảnh:** luôn `next/image`. Domain ngoài phải khai báo trong `next.config.ts`.
+
+**Animation:** dùng class có sẵn (`animate-fade-in-up`, `delay-100`…). Stagger theo index thì inline `animationDelay: ${index * 80}ms`.
+
+---
+
+## 4. Git
+
+- Commit message theo mẫu đang dùng: `[Fix]: ...`, `[Update]: ...`, `[Refactor]: ...` (hoặc `fix: ...`). Nội dung tiếng Anh.
+- Branch chính: `master`.
+- **Không commit `.env`** (đã ignore). Biến môi trường đang dùng: `MONGODB_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, `API_FOOTBALL_KEY`, `API_FOOTBALL_TEAM_ID`, `API_FOOTBALL_SEASON`.
+
+## 5. Lệnh
+
+```bash
+npm run dev              # dev server — http://localhost:3000, admin ở /admin
+npm run build
+npm run lint             # bắt buộc sạch trước khi commit
+npm run typecheck        # tsc --noEmit — bắt buộc sạch trước khi commit
+npm run generate:types   # sinh lại payload-types.ts
+npm run generate:importmap
+```
+
+⚠️ **Sửa `collections/` hoặc `globals/` → phải chạy `npm run generate:types` và commit `payload-types.ts` kèm theo.**
+Type của CMS **luôn import từ `@/payload-types`**, không tự khai báo interface tay:
+```ts
+import type { Player as PayloadPlayer, SiteSetting } from '@/payload-types'
+```
+(Domain type của UI vẫn nằm ở `data/*.ts` — `lib/payload-api.ts` là nơi map giữa hai bên.)

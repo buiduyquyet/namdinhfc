@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "payload": "cross-env NODE_OPTIONS=\"--import tsx --no-deprecation\" payload --disable-transpile",
+    "generate:types": "npm run payload -- generate:types",
+    "generate:importmap": "npm run payload -- generate:importmap"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "^3.80.0",

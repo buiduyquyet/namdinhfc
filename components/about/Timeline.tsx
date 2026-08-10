@@ -111,7 +111,7 @@ const Timeline = ({ events }: TimelineProps) => {
   return (
     <div className="relative max-w-5xl mx-auto">
       {/* Vertical line - Desktop: center, Mobile: left (20px = half of w-10) */}
-      <div className="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/20 via-primary/50 to-primary/20" />
+      <div className="absolute left-5 md:left-1/2 md:-translate-x-1/2 top-0 bottom-0 w-0.5 bg-linear-to-b from-primary/20 via-primary/50 to-primary/20" />
 
       {/* Timeline items */}
       <div className="space-y-8 md:space-y-12">

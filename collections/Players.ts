@@ -28,6 +28,15 @@ export const Players: CollectionConfig = {
       { label: 'Tiền đạo', value: 'Tiền đạo' },
     ]},
     { name: 'nationality', type: 'text', label: 'Quốc tịch', defaultValue: 'Việt Nam' },
+    {
+      name: 'dateOfBirth',
+      type: 'date',
+      label: 'Ngày sinh',
+      admin: {
+        date: { pickerAppearance: 'dayOnly', displayFormat: 'dd/MM/yyyy' },
+        description: 'Dùng để tính độ tuổi trung bình hiển thị ở trang Đội hình.',
+      },
+    },
     { name: 'image', type: 'upload', relationTo: 'media', label: 'Ảnh đại diện (Upload)' },
     { name: 'imageUrl', type: 'text', label: 'URL Ảnh từ API' },
     {

@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Thép Xanh Nam Định FC — Website chính thức
 
-## Getting Started
+Website giới thiệu, đội hình, lịch thi đấu và tin tức của CLB Bóng đá Thép Xanh Nam Định.
 
-First, run the development server:
+**Stack:** Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Payload CMS 3 · MongoDB
+
+---
+
+## Yêu cầu
+
+- Node.js 20+
+- MongoDB (local hoặc Atlas)
+
+## Cài đặt
+
+```bash
+npm install
+```
+
+Tạo file `.env` ở thư mục gốc:
+
+```bash
+# Bắt buộc
+MONGODB_URI=mongodb://127.0.0.1/namdinh-fc
+PAYLOAD_SECRET=<chuỗi bí mật bất kỳ, đủ dài>
+NEXT_PUBLIC_SERVER_URL=http://localhost:3000/   # nhớ dấu "/" ở cuối
+
+# Tuỳ chọn — chỉ cần khi dùng tính năng đồng bộ cầu thủ từ API-Football
+API_FOOTBALL_KEY=<api key>
+API_FOOTBALL_TEAM_ID=5734
+API_FOOTBALL_SEASON=2024
+```
+
+## Chạy dự án
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Trang public: <http://localhost:3000>
+- Trang quản trị (Payload): <http://localhost:3000/admin> — lần đầu vào sẽ được yêu cầu tạo tài khoản admin.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Các lệnh khác
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Lệnh | Mô tả |
+|---|---|
+| `npm run build` | Build production |
+| `npm run start` | Chạy bản build |
+| `npm run lint` | ESLint |
+| `npm run typecheck` | `tsc --noEmit` — chạy trước mỗi commit |
+| `npm run generate:types` | Sinh lại `payload-types.ts` sau khi đổi collections/globals |
+| `npm run generate:importmap` | Sinh lại import map cho component tuỳ biến trong admin |
 
-## Learn More
+> ⚠️ Mỗi khi sửa file trong `collections/` hoặc `globals/`, **phải** chạy `npm run generate:types` và commit `payload-types.ts` kèm theo.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Cấu trúc
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+app/
+  (main)/     Trang public — trang chủ, /about, /squad, /contact
+  (payload)/  Admin + REST/GraphQL API do Payload sinh (không sửa tay)
+  api/        Route nghiệp vụ riêng: sync-players, import-players
+  globals.css Design system của toàn site
 
-## Deploy on Vercel
+collections/  Payload collections: Users, Players, News, Matches, Media
+globals/      Payload globals: SiteSettings
+lib/          Logic không phải React: gọi API, parse Excel, mapping dữ liệu
+data/         Dữ liệu tĩnh + type domain
+components/   UI components
+docs/         Tài liệu design system
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Quản trị nội dung
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Cầu thủ** có 3 nguồn dữ liệu, đánh dấu bằng field `Nguồn dữ liệu`:
+
+1. **Nhập tay** — tạo trực tiếp trong admin.
+2. **API Football** — nút *Chạy Đồng Bộ Ngay* ở đầu danh sách Cầu thủ (yêu cầu `API_FOOTBALL_KEY`).
+3. **Nhập từ Excel** — nút *Import Excel*; tải file mẫu tại `/api/import-players/template`. Trùng tên sẽ bị bỏ qua, lỗi báo theo từng dòng.
+
+Trong **Cấu hình trang → Nguồn dữ liệu cầu thủ**, chọn nguồn nào sẽ được hiển thị ra trang public (hoặc *Tất cả các nguồn*).
+
+Cả hai endpoint đồng bộ/import đều yêu cầu đăng nhập admin.
+
+---
