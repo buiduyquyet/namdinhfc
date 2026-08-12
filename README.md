@@ -31,6 +31,8 @@ API_FOOTBALL_TEAM_ID=5734
 API_FOOTBALL_SEASON=2024
 ```
 
+> ⚠️ **`NEXT_PUBLIC_SERVER_URL` quyết định trang lấy dữ liệu từ đâu.** Toàn bộ page fetch nội dung qua REST API tại địa chỉ này. Nếu để trỏ về site đã deploy (ví dụ `https://namdinhfc.vercel.app/`) thì khi chạy `npm run dev` / `npm run build` ở máy, trang vẫn đọc dữ liệu và **schema của bản deploy**, không phải code đang sửa — collection mới thêm sẽ trả 403 hoặc thiếu field cho tới khi deploy. Khi phát triển ở máy, hãy đặt `http://localhost:3000/`.
+
 ## Chạy dự án
 
 ```bash
@@ -59,7 +61,7 @@ npm run dev
 
 ```
 app/
-  (main)/     Trang public — trang chủ, /about, /squad, /contact
+  (main)/     Trang public — trang chủ, /about, /squad, /contact, /news, /news/[slug]
   (payload)/  Admin + REST/GraphQL API do Payload sinh (không sửa tay)
   api/        Route nghiệp vụ riêng: sync-players, import-players
   globals.css Design system của toàn site
@@ -69,7 +71,7 @@ globals/      Payload globals: SiteSettings
 lib/          Logic không phải React: gọi API, parse Excel, mapping dữ liệu
 data/         Dữ liệu tĩnh + type domain
 components/   UI components
-docs/         Tài liệu design system
+.claude/       CLAUDE.md (quy ước code) + DESIGN_SYSTEM.md
 ```
 
 ## Quản trị nội dung
@@ -83,5 +85,12 @@ docs/         Tài liệu design system
 Trong **Cấu hình trang → Nguồn dữ liệu cầu thủ**, chọn nguồn nào sẽ được hiển thị ra trang public (hoặc *Tất cả các nguồn*).
 
 Cả hai endpoint đồng bộ/import đều yêu cầu đăng nhập admin.
+
+**Tin tức** dùng cơ chế nháp/xuất bản gốc của Payload (`versions.drafts`):
+
+- Trong admin, bài viết có nút **Save draft** và **Publish**. Chỉ bài đã Publish mới hiện ra trang public — Payload tự ẩn bản nháp với request chưa đăng nhập.
+- Ô **Slug** để trống sẽ tự sinh từ tiêu đề (đã bỏ dấu tiếng Việt).
+- Ô **Tóm tắt** để trống thì hệ thống tự cắt 180 ký tự đầu từ nội dung bài.
+- **Chuyên mục** dùng cho bộ lọc ở `/news` và khối "Bài viết liên quan".
 
 ---

@@ -11,8 +11,9 @@ const NAV_ITEMS = [
   { label: "Trang Chủ", href: "/" },
   { label: "Giới Thiệu", href: "/about" },
   { label: "Đội Hình", href: "/squad" },
+  { label: "Tin Tức", href: "/news" },
   { label: "Lịch Thi Đấu", href: "/#lich-thi-dau" },
-  { label: "Liên Hệ", href: "/#lien-he" },
+  { label: "Liên Hệ", href: "/contact" },
 ];
 
 const Header = () => {

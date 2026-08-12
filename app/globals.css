@@ -237,6 +237,82 @@
     color: #059669;
   }
 
+  /* ===== RICH TEXT (nội dung bài viết từ CMS) ===== */
+  .rich-text {
+    font-size: 1.0625rem;
+    line-height: 1.8;
+    color: var(--color-gray-700);
+  }
+
+  .rich-text > * + * {
+    margin-top: 1.25rem;
+  }
+
+  .rich-text h2,
+  .rich-text h3,
+  .rich-text h4 {
+    margin-top: 2.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .rich-text h2 {
+    font-size: 1.625rem;
+  }
+
+  .rich-text h3 {
+    font-size: 1.3125rem;
+  }
+
+  .rich-text h4 {
+    font-size: 1.125rem;
+  }
+
+  .rich-text a {
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .rich-text ul,
+  .rich-text ol {
+    padding-left: 1.5rem;
+    list-style-position: outside;
+  }
+
+  .rich-text ul {
+    list-style-type: disc;
+  }
+
+  .rich-text ol {
+    list-style-type: decimal;
+  }
+
+  .rich-text li + li {
+    margin-top: 0.5rem;
+  }
+
+  .rich-text blockquote {
+    border-left: 4px solid var(--color-primary);
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    color: var(--color-gray-600);
+    font-style: italic;
+  }
+
+  .rich-text img {
+    border-radius: var(--radius-md);
+  }
+
+  .rich-text hr {
+    border: 0;
+    border-top: 1px solid var(--color-gray-200);
+    margin: 2.5rem 0;
+  }
+
+  .rich-text strong {
+    color: var(--color-secondary);
+    font-weight: 700;
+  }
+
   /* ===== DIVIDER ===== */
   .divider {
     width: 60px;

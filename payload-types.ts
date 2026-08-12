@@ -210,7 +210,10 @@ export interface Media {
 export interface News {
   id: string;
   title: string;
-  slug?: string | null;
+  /**
+   * Hiển thị ở danh sách tin và thẻ chia sẻ mạng xã hội. Tối đa 300 ký tự.
+   */
+  excerpt?: string | null;
   coverImage: string | Media;
   content: {
     root: {
@@ -227,10 +230,15 @@ export interface News {
     };
     [k: string]: unknown;
   };
+  category: 'doi-bong' | 'tran-dau' | 'chuyen-nhuong' | 'cong-dong';
+  /**
+   * Để trống sẽ tự sinh từ tiêu đề.
+   */
+  slug?: string | null;
   publishedDate?: string | null;
-  status?: ('draft' | 'published') | null;
   updatedAt: string;
   createdAt: string;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -392,13 +400,15 @@ export interface PlayersSelect<T extends boolean = true> {
  */
 export interface NewsSelect<T extends boolean = true> {
   title?: T;
-  slug?: T;
+  excerpt?: T;
   coverImage?: T;
   content?: T;
+  category?: T;
+  slug?: T;
   publishedDate?: T;
-  status?: T;
   updatedAt?: T;
   createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

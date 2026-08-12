@@ -5,6 +5,7 @@ import {
   StatsSection,
   FeaturedPlayersSection,
   LatestResultsSection,
+  NewsSection,
   CTASection,
 } from "@/components/sections";
 
@@ -17,6 +18,7 @@ export default function HomePage() {
       <StatsSection />
       <FeaturedPlayersSection />
       <LatestResultsSection />
+      <NewsSection />
       <CTASection />
     </>
   );

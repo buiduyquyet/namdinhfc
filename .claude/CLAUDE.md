@@ -2,7 +2,7 @@
 
 Website chính thức CLB Thép Xanh Nam Định. Next.js 16 (App Router) + Payload CMS 3 (MongoDB) + Tailwind CSS v4.
 
-> **Bắt buộc đọc trước khi code UI:** [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) — design tokens, component inventory, quy ước layout.
+> **Bắt buộc đọc trước khi code UI:** [.claude/DESIGN_SYSTEM.md](DESIGN_SYSTEM.md) — design tokens, component inventory, quy ước layout.
 
 ---
 
@@ -13,7 +13,7 @@ app/
   (main)/            # Route group public — có Header/Footer, dùng globals.css
     layout.tsx       #   root layout: <html lang="vi">, font Montserrat + Inter, metadata SEO
     page.tsx         #   trang chủ = ghép các section từ components/sections
-    about/, squad/, contact/
+    about/, squad/, contact/, news/, news/[slug]/
   (payload)/         # Route group admin — do Payload sinh ra, KHÔNG sửa tay
     admin/[[...segments]]/page.tsx
     api/[...slug]/route.ts      # REST + GraphQL của Payload
@@ -42,7 +42,6 @@ public/              # Ảnh tĩnh; `public/media` là nơi Payload lưu file up
     const msg = error instanceof Error ? error.message : String(error)
   }
   ```
-  (`app/api/sync-players/route.ts` còn 1 chỗ dùng `any` — cần sửa, đừng copy pattern đó.)
 - Type domain đặt trong `data/*.ts` và export cùng file với dữ liệu (`Player` + `players`, `Match` + `matches`).
 - Props component: khai báo `interface XxxProps` ngay trên component, không export trừ khi dùng lại nơi khác.
 
@@ -65,10 +64,13 @@ public/              # Ảnh tĩnh; `public/media` là nơi Payload lưu file up
 - Comment: tiếng Việt hoặc tiếng Anh đều được, nhưng comment cho logic nghiệp vụ Việt Nam (parse Excel, mapping vị trí) nên viết tiếng Việt cho khớp file hiện có.
 
 ### Data fetching
-- Fetch Payload qua REST API trong `lib/payload-api.ts`, **không** import `getPayload` vào page/component:
+- Fetch Payload qua REST API trong `lib/*-api.ts`, **không** import `getPayload` vào page/component.
+  Dùng helper chung ở `lib/payload-rest.ts` (`payloadFetch`, `resolveMediaUrl`, `PayloadListResponse`) thay vì gọi `fetch` thô:
   ```ts
-  fetch(`${baseUrl}api/players?limit=100&sort=number`, { next: { revalidate: 60 } })
+  const data = await payloadFetch<PayloadListResponse<News>>(`news?limit=9&depth=1`)
   ```
+- `NEXT_PUBLIC_SERVER_URL` quyết định page đọc dữ liệu từ đâu. Khi dev ở máy phải đặt `http://localhost:3000/`,
+  nếu trỏ về site đã deploy thì trang sẽ đọc **schema của bản deploy** — collection mới thêm trả 403 cho tới khi deploy.
 - `getPayload({ config })` chỉ dùng trong `app/api/**/route.ts` (server-side write).
 - **Luôn có fallback**: lỗi fetch → `console.error` + trả mảng rỗng / dữ liệu tĩnh, không để page crash (xem `lib/api-football.ts`, `lib/payload-api.ts`).
 - Mapping giữa 2 domain (Payload dùng vị trí tiếng Việt, UI dùng `Position` tiếng Anh) đặt trong `lib/`, không rải trong component.
@@ -85,15 +87,17 @@ public/              # Ảnh tĩnh; `public/media` là nơi Payload lưu file up
 ### Payload collections
 - Mọi field có `label` tiếng Việt.
 - Collection cần đọc từ trang public → `access: { read: () => true }`.
-- Hằng số option dùng chung giữa collection và UI đặt trong `lib/` (mẫu: `lib/player-source.ts`).
+- Hằng số option dùng chung giữa collection và UI đặt trong `lib/` (mẫu: `lib/player-source.ts`, `lib/news-category.ts`).
+- Cần trạng thái nháp/xuất bản → dùng `versions: { drafts: true }` của Payload, **không** tự tạo field `status`.
+  Payload tự ẩn bản nháp khỏi request chưa đăng nhập, nên `access.read` chỉ cần `() => true` (mẫu: `collections/News.ts`).
 
 ---
 
-## 3. Rule UI/CSS (tóm tắt — chi tiết ở docs/DESIGN_SYSTEM.md)
+## 3. Rule UI/CSS (tóm tắt — chi tiết ở .claude/DESIGN_SYSTEM.md)
 
 **Thứ tự ưu tiên khi style, từ trên xuống:**
 
-1. **Class tiện ích trong `globals.css`**: `.container`, `.section`, `.section-alt`, `.btn .btn-primary`, `.card`, `.badge`, `.divider`.
+1. **Class tiện ích trong `globals.css`**: `.container`, `.section`, `.section-alt`, `.btn .btn-primary`, `.card`, `.badge`, `.divider`, `.rich-text`.
 2. **Tailwind utility** với token đã map: `text-primary`, `bg-secondary`, `font-heading`, `rounded-full`.
 3. **Inline `style={{}}`** — chỉ khi giá trị động (animation delay theo index, gradient phức tạp, `clamp()`).
 

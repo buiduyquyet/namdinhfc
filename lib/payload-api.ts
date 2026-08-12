@@ -1,10 +1,8 @@
 import { Player, Position } from '@/data/players'
 import type { PlayerSourceFilter } from '@/lib/player-source'
+import { payloadFetch, resolveMediaUrl } from '@/lib/payload-rest'
+import type { PayloadListResponse } from '@/lib/payload-rest'
 import type { Player as PayloadPlayer, SiteSetting } from '@/payload-types'
-
-interface PayloadListResponse<T> {
-  docs: T[]
-}
 
 /** Maps Vietnamese position name to internal Position type */
 function mapPosition(viPosition: PayloadPlayer['position']): Position {
@@ -16,9 +14,7 @@ function mapPosition(viPosition: PayloadPlayer['position']): Position {
 
 /** Resolves image URL from Payload document */
 function resolveImageUrl(doc: PayloadPlayer): string {
-  if (doc.imageUrl) return doc.imageUrl
-  if (doc.image && typeof doc.image === 'object' && doc.image.url) return doc.image.url
-  return ''
+  return doc.imageUrl || resolveMediaUrl(doc.image)
 }
 
 /**
@@ -43,23 +39,13 @@ function calculateAge(dateOfBirth?: string | null): number {
   return age > 0 && age < 120 ? age : 0
 }
 
-function getBaseUrl(): string {
-  return process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000/'
-}
-
 /**
  * Đọc nguồn dữ liệu cầu thủ đang được chọn trong global "Cấu hình trang".
  * Trả về `all` nếu global chưa được lưu lần nào hoặc gọi lỗi.
  */
 export async function getActivePlayerSource(): Promise<PlayerSourceFilter> {
   try {
-    const res = await fetch(`${getBaseUrl()}api/globals/site-settings`, {
-      next: { revalidate: 60 },
-    })
-
-    if (!res.ok) return 'all'
-
-    const data: Partial<SiteSetting> = await res.json()
+    const data = await payloadFetch<Partial<SiteSetting>>('globals/site-settings')
     return data.playerDataSource || 'all'
   } catch (error) {
     console.error('Failed to fetch site settings from Payload CMS:', error)
@@ -69,21 +55,13 @@ export async function getActivePlayerSource(): Promise<PlayerSourceFilter> {
 
 /** Fetches players from Payload CMS REST API, filtered by the configured data source */
 export async function getPayloadPlayers(): Promise<Player[]> {
-  const baseUrl = getBaseUrl()
-
   try {
     const source = await getActivePlayerSource()
     const sourceQuery = source === 'all' ? '' : `&where[dataSource][equals]=${source}`
 
-    const res = await fetch(`${baseUrl}api/players?limit=100&sort=number${sourceQuery}`, {
-      next: { revalidate: 60 },
-    })
-
-    if (!res.ok) {
-      throw new Error(`Payload API responded with status: ${res.status}`)
-    }
-
-    const data: PayloadListResponse<PayloadPlayer> = await res.json()
+    const data = await payloadFetch<PayloadListResponse<PayloadPlayer>>(
+      `players?limit=100&sort=number&depth=1${sourceQuery}`,
+    )
 
     return data.docs.map((doc) => ({
       id: doc.id.toString(),

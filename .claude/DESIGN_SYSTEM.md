@@ -92,6 +92,7 @@ Heading mặc định đã được set trong `@layer base`: `font-weight: 700`,
 | `.badge` | pill nhỏ, uppercase, `0.75rem`, letter-spacing `0.05em` |
 | `.badge-primary` / `.badge-accent` / `.badge-success` | 3 biến thể màu |
 | `.divider` | gạch gradient `60×4px`, bo tròn — dùng dưới tiêu đề |
+| `.rich-text` | Typography cho nội dung richText từ CMS: heading, list, blockquote, link, `<hr>`, ảnh bo góc. Chỉ dùng qua `news/ArticleContent` |
 
 ### Animation
 
@@ -135,11 +136,17 @@ Khác: `.gradient-text` (chữ gradient). Đã có `@media (prefers-reduced-moti
 | `LeagueTable` | server | Bảng xếp hạng V.League |
 | `StatsCounter` | client | Dãy số liệu đếm — nhận `items: { value, label, suffix? }[]` |
 | `ImageSlider` | client | Slider fade tự động: `images` / `interval=5000` / `priority` + dot indicator |
+| `news/NewsCard` | server | Card bài viết: ảnh 16:9 (`aspect-video`), badge chuyên mục, ngày, tiêu đề `line-clamp-2`, tóm tắt `line-clamp-3` |
+| `news/CategoryTabs` | server | Dải tab lọc chuyên mục — điều hướng bằng `<Link>`, không cần client |
+| `news/Pagination` | server | Phân trang dạng pill, giữ nguyên query hiện có qua prop `basePath` |
+| `news/ArticleContent` | server | Bọc `RichText` của Payload, gắn class `.rich-text` |
 
 ### Sections trang chủ (`components/sections/`)
 
 Thứ tự trong `app/(main)/page.tsx`:
-`HeroSection` → `AboutSection` → `NextMatchSection` → `StatsSection` → `FeaturedPlayersSection` → `LatestResultsSection` → `CTASection`
+`HeroSection` → `AboutSection` → `NextMatchSection` → `StatsSection` → `FeaturedPlayersSection` → `LatestResultsSection` → `NewsSection` → `CTASection`
+
+Nền các section phải xen kẽ để phân tách thị giác: `LatestResultsSection` dùng `.section-alt` (xám) nên `NewsSection` dùng `.section` (trắng).
 
 Export qua barrel `components/sections/index.ts`.
 
@@ -147,6 +154,7 @@ Export qua barrel `components/sections/index.ts`.
 
 - `components/squad/`: `PlayerSection` (nhóm cầu thủ theo vị trí), `SquadStats` (dải số liệu nền navy)
 - `components/about/`: `ClubHistory`, `Timeline`, `StadiumSection`, `SectionTitle`
+- `components/news/`: `NewsCard`, `CategoryTabs`, `Pagination`, `ArticleContent`
 - `components/admin/`: `SyncButton`, `ImportPlayersButton` — inject vào Payload admin qua `admin.components.beforeList` trong `collections/Players.ts`
 
 ---
@@ -158,6 +166,7 @@ Export qua barrel `components/sections/index.ts`.
 | `gioi-thieu` | AboutSection |
 | `lich-thi-dau` | NextMatchSection |
 | `doi-hinh` | FeaturedPlayersSection |
+| `tin-tuc` | NewsSection |
 | `lien-he` | CTASection |
 
 Thêm mục nav mới → thêm vào `NAV_ITEMS` trong `Header.tsx` **và** đặt `id` tương ứng trên `<section>`.

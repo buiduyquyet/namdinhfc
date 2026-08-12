@@ -7,8 +7,8 @@ const QUICK_LINKS = [
     { label: "Trang Chủ", href: "/" },
     { label: "Giới Thiệu", href: "/about" },
     { label: "Đội Hình", href: "/squad" },
+    { label: "Tin Tức", href: "/news" },
     { label: "Lịch Thi Đấu", href: "/fixtures" },
-    { label: "Sân Thiên Trường", href: "/stadium" },
     { label: "Liên Hệ", href: "/contact" },
 ];
 
