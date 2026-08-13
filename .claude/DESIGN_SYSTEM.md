@@ -132,7 +132,7 @@ Khác: `.gradient-text` (chữ gradient). Đã có `@media (prefers-reduced-moti
 | Component | Loại | Mô tả |
 |---|---|---|
 | `PlayerCard` | server | Card cầu thủ: gradient primary, watermark logo, số áo lớn nền, badge vị trí, avatar tròn, 2 ô stats |
-| `MatchCard` | server | Card trận đấu, có `variant="featured"` |
+| `MatchCard` | server | Card trận đấu: `variant="default" \| "featured"`, prop `title` cho biến thể featured. Tự đổi tỉ số ↔ giờ theo `status`, hiện logo đội nếu có (không thì viết tắt tên), nút Mua vé / Xem highlight |
 | `LeagueTable` | server | Bảng xếp hạng V.League |
 | `StatsCounter` | client | Dãy số liệu đếm — nhận `items: { value, label, suffix? }[]` |
 | `ImageSlider` | client | Slider fade tự động: `images` / `interval=5000` / `priority` + dot indicator |
@@ -155,6 +155,7 @@ Export qua barrel `components/sections/index.ts`.
 - `components/squad/`: `PlayerSection` (nhóm cầu thủ theo vị trí), `SquadStats` (dải số liệu nền navy)
 - `components/about/`: `ClubHistory`, `Timeline`, `StadiumSection`, `SectionTitle`
 - `components/news/`: `NewsCard`, `CategoryTabs`, `Pagination`, `ArticleContent`
+- `components/fixtures/`: `FixtureFilters` (tab Lịch/Kết quả + lọc giải), `MatchMonthGroup` (nhóm trận theo tháng)
 - `components/admin/`: `SyncButton`, `ImportPlayersButton` — inject vào Payload admin qua `admin.components.beforeList` trong `collections/Players.ts`
 
 ---
@@ -202,7 +203,7 @@ grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6
 ## 7. Nợ kỹ thuật đã biết (không nhân bản)
 
 1. **`<style jsx global>`** trong `Header.tsx`, `Footer.tsx`, `StatsCounter.tsx` — nên chuyển sang Tailwind responsive utility.
-2. **Inline style dày đặc**: `LeagueTable` (30 chỗ), `Footer` (26), `MatchCard` (15) — nên migrate dần sang Tailwind class.
+2. **Inline style dày đặc**: `LeagueTable` (~30 chỗ), `Footer` (~26) — nên migrate dần sang Tailwind class. `MatchCard` đã migrate xong, dùng làm mẫu.
 3. **Hai `SectionTitle`** (root + `about/`) trùng chức năng — cần hợp nhất thành một component có prop `highlight`.
 4. **Typo prop `chidlren`** trong `SectionDark.tsx` — nên đổi thành `children` (React children thật) khi có dịp refactor.
 5. `HeroSection` không có nội dung text — chỉ là slider + lớp trang trí.

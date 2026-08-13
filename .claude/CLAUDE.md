@@ -13,7 +13,7 @@ app/
   (main)/            # Route group public — có Header/Footer, dùng globals.css
     layout.tsx       #   root layout: <html lang="vi">, font Montserrat + Inter, metadata SEO
     page.tsx         #   trang chủ = ghép các section từ components/sections
-    about/, squad/, contact/, news/, news/[slug]/
+    about/, squad/, contact/, news/, news/[slug]/, fixtures/
   (payload)/         # Route group admin — do Payload sinh ra, KHÔNG sửa tay
     admin/[[...segments]]/page.tsx
     api/[...slug]/route.ts      # REST + GraphQL của Payload
@@ -73,6 +73,8 @@ public/              # Ảnh tĩnh; `public/media` là nơi Payload lưu file up
   nếu trỏ về site đã deploy thì trang sẽ đọc **schema của bản deploy** — collection mới thêm trả 403 cho tới khi deploy.
 - `getPayload({ config })` chỉ dùng trong `app/api/**/route.ts` (server-side write).
 - **Luôn có fallback**: lỗi fetch → `console.error` + trả mảng rỗng / dữ liệu tĩnh, không để page crash (xem `lib/api-football.ts`, `lib/payload-api.ts`).
+  Phân biệt rõ: **API lỗi** → fallback `data/*.ts`; **API trả 0 bản ghi** → trả rỗng để UI hiện empty state, không dựng dữ liệu giả (xem `lib/matches-api.ts`).
+- Ngày giờ từ Payload là UTC. Đổi sang giờ Việt Nam bằng helper trong `lib/format-date.ts`, **không** dùng `new Date(x).getHours()` trực tiếp.
 - Mapping giữa 2 domain (Payload dùng vị trí tiếng Việt, UI dùng `Position` tiếng Anh) đặt trong `lib/`, không rải trong component.
 
 ### API route
@@ -87,7 +89,7 @@ public/              # Ảnh tĩnh; `public/media` là nơi Payload lưu file up
 ### Payload collections
 - Mọi field có `label` tiếng Việt.
 - Collection cần đọc từ trang public → `access: { read: () => true }`.
-- Hằng số option dùng chung giữa collection và UI đặt trong `lib/` (mẫu: `lib/player-source.ts`, `lib/news-category.ts`).
+- Hằng số option dùng chung giữa collection và UI đặt trong `lib/` (mẫu: `lib/player-source.ts`, `lib/news-category.ts`, `lib/competition.ts`).
 - Cần trạng thái nháp/xuất bản → dùng `versions: { drafts: true }` của Payload, **không** tự tạo field `status`.
   Payload tự ẩn bản nháp khỏi request chưa đăng nhập, nên `access.read` chỉ cần `() => true` (mẫu: `collections/News.ts`).
 

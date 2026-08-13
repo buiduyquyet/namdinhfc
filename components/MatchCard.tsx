@@ -1,275 +1,189 @@
-import { Match, TEAM_NAME } from "@/data/matches";
+import Image from "next/image";
+
+import { TEAM_NAME, type Match } from "@/data/matches";
+import { formatWeekdayDate } from "@/lib/format-date";
 
 interface MatchCardProps {
   match: Match;
   variant?: "default" | "featured";
+  /** Tiêu đề nhỏ phía trên, chỉ dùng cho biến thể `featured`. */
+  title?: string;
 }
 
-function formatDate(dateStr: string): string {
-  const date = new Date(dateStr);
-  const options: Intl.DateTimeFormatOptions = {
-    weekday: "short",
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  };
-  return date.toLocaleDateString("vi-VN", options);
+interface TeamLogoProps {
+  name: string;
+  logo?: string;
+  size?: number;
 }
 
-function TeamLogo({ name, size = 40 }: { name: string; size?: number }) {
+/** Viết tắt tên đội khi chưa upload logo: "Hà Nội FC" -> "HN". */
+function getInitials(name: string): string {
+  if (name === TEAM_NAME) return "NĐ";
+
+  return name
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+}
+
+const TeamLogo = ({ name, logo, size = 44 }: TeamLogoProps) => {
   const isNamDinh = name === TEAM_NAME;
-  const initials = isNamDinh
-    ? "NĐ"
-    : name
-        .split(" ")
-        .map((w) => w[0])
-        .join("")
-        .slice(0, 2)
-        .toUpperCase();
+
+  if (logo) {
+    return (
+      <div
+        className="relative rounded-full overflow-hidden bg-white/10 shrink-0"
+        style={{ width: size, height: size }}
+      >
+        <Image src={logo} alt={name} fill sizes={`${size}px`} className="object-contain" />
+      </div>
+    );
+  }
 
   return (
     <div
-      style={{
-        width: `${size}px`,
-        height: `${size}px`,
-        borderRadius: "50%",
-        background: isNamDinh
-          ? "var(--color-primary)"
-          : "linear-gradient(135deg, var(--color-gray-200), var(--color-gray-300))",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: isNamDinh ? "var(--color-secondary)" : "var(--color-gray-600)",
-        fontFamily: "var(--font-heading)",
-        fontWeight: 800,
-        fontSize: `${size * 0.3}px`,
-        flexShrink: 0,
-        boxShadow: isNamDinh
-          ? "0 2px 8px rgba(152, 197, 233, 0.3)"
-          : "0 2px 4px rgba(0,0,0,0.08)",
-      }}
+      className={`rounded-full flex items-center justify-center font-heading font-extrabold shrink-0 ${
+        isNamDinh
+          ? "bg-primary text-secondary shadow-md"
+          : "bg-linear-to-br from-gray-200 to-gray-300 text-gray-600 shadow-sm"
+      }`}
+      style={{ width: size, height: size, fontSize: size * 0.3 }}
     >
-      {initials}
+      {getInitials(name)}
     </div>
   );
-}
+};
 
-const MatchCard = ({
-  match,
-  variant = "default",
-}: MatchCardProps) => {
+const STATUS_BADGE: Record<Match["status"], { label: string; className: string } | null> = {
+  upcoming: null,
+  live: { label: "● TRỰC TIẾP", className: "bg-red-50 text-red-500 animate-pulse" },
+  finished: { label: "Kết thúc", className: "badge-success" },
+  postponed: { label: "Bị hoãn", className: "bg-amber-50 text-amber-700" },
+};
+
+const MatchCard = ({ match, variant = "default", title }: MatchCardProps) => {
   const isFeatured = variant === "featured";
-  const isFinished = match.status === "finished";
-  const isLive = match.status === "live";
+  const hasScore = match.status === "finished" || match.status === "live";
+  const logoSize = isFeatured ? 56 : 44;
+  const statusBadge = STATUS_BADGE[match.status];
+
+  const textMain = isFeatured ? "text-white" : "text-secondary";
+  const textMuted = isFeatured ? "text-white/40" : "text-gray-400";
 
   return (
     <div
-      className={isFeatured ? "" : "card"}
-      style={{
-        padding: "16px 20px",
-        borderRadius: "var(--radius-md)",
-        background: isFeatured
-          ? "linear-gradient(135deg, var(--color-secondary-dark), var(--color-secondary), var(--color-secondary-light))"
-          : undefined,
-        border: isFeatured ? "1px solid rgba(152, 197, 233, 0.15)" : undefined,
-      }}
+      className={`h-full px-5 py-4 rounded-xl flex flex-col ${
+        isFeatured
+          ? "bg-linear-to-br from-secondary-dark via-secondary to-secondary-light border border-primary/15"
+          : "card"
+      }`}
     >
-      <h3
-        style={{
-          fontFamily: "var(--font-heading)",
-          fontSize: "1.5rem",
-          fontWeight: 700,
-          color: "white",
-          margin: 0,
-          paddingBottom: "20px",
-        }}
-      >
-        Trận kế tiếp
-      </h3>
-      {/* Competition & Date */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: "3rem",
-        }}
-      >
+      {isFeatured && title && (
+        <h3 className="font-heading font-bold text-xl text-white mb-5">{title}</h3>
+      )}
+
+      {/* Giải đấu & trạng thái */}
+      <div className="flex items-center justify-between gap-2 mb-8">
         <span
-          className={`badge ${isFeatured ? "" : "badge-primary"}`}
-          style={
-            isFeatured
-              ? {
-                  backgroundColor: "rgba(152, 197, 233, 0.15)",
-                  color: "var(--color-primary)",
-                }
-              : {}
-          }
+          className={`badge ${isFeatured ? "bg-primary/15 text-primary" : "badge-primary"}`}
         >
           {match.competition}
         </span>
-        {/* {isLive && ( */}
-        <span
-          className="badge"
-          style={{
-            backgroundColor: "rgba(239, 68, 68, 0.1)",
-            color: "#EF4444",
-            animation: "pulse-glow 2s infinite",
-          }}
-        >
-          ● LIVE
-        </span>
-        {/* )} */}
-        {isFinished && <span className="badge badge-success">Kết thúc</span>}
+        {statusBadge && <span className={`badge ${statusBadge.className}`}>{statusBadge.label}</span>}
       </div>
 
-      {/* Teams */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: "1rem",
-        }}
-      >
-        {/* Home Team */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "0.75rem",
-            flex: 1,
-            minWidth: 0,
-          }}
-        >
-          <TeamLogo name={match.homeTeam} size={isFeatured ? 56 : 44} />
+      {/* Hai đội & tỉ số */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex flex-col items-center gap-3 flex-1 min-w-0">
+          <TeamLogo name={match.homeTeam} logo={match.homeLogo} size={logoSize} />
           <span
-            style={{
-              fontFamily: "var(--font-heading)",
-              fontWeight: 700,
-              fontSize: isFeatured ? "0.875rem" : "0.8125rem",
-              color: isFeatured ? "white" : "var(--color-secondary)",
-              textAlign: "center",
-              lineHeight: 1.3,
-            }}
+            className={`font-heading font-bold text-center leading-tight ${textMain} ${
+              isFeatured ? "text-sm" : "text-[0.8125rem]"
+            }`}
           >
             {match.homeTeam}
           </span>
         </div>
 
-        {/* Score / Time */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "0.25rem",
-            flexShrink: 0,
-          }}
-        >
-          {isFinished || isLive ? (
+        <div className="flex flex-col items-center gap-1 shrink-0">
+          {hasScore ? (
             <div
-              style={{
-                fontFamily: "var(--font-heading)",
-                fontWeight: 900,
-                fontSize: isFeatured ? "2.5rem" : "2rem",
-                color: isFeatured ? "white" : "var(--color-secondary)",
-                lineHeight: 1,
-                letterSpacing: "0.05em",
-              }}
+              className={`font-heading font-black leading-none tracking-wider ${textMain} ${
+                isFeatured ? "text-4xl" : "text-3xl"
+              }`}
             >
-              {match.homeScore} - {match.awayScore}
+              {match.homeScore ?? 0} - {match.awayScore ?? 0}
             </div>
           ) : (
             <div
-              style={{
-                fontFamily: "var(--font-heading)",
-                fontWeight: 800,
-                fontSize: isFeatured ? "1.75rem" : "1.25rem",
-                color: isFeatured
-                  ? "var(--color-primary)"
-                  : "var(--color-secondary)",
-                lineHeight: 1,
-              }}
+              className={`font-heading font-extrabold leading-none ${
+                isFeatured ? "text-3xl text-primary" : "text-xl text-secondary"
+              }`}
             >
               {match.time}
             </div>
           )}
-          <span
-            style={{
-              fontSize: "0.75rem",
-              color: isFeatured
-                ? "rgba(255,255,255,0.4)"
-                : "var(--color-gray-400)",
-              fontWeight: 500,
-            }}
-          >
-            {isFinished ? "FT" : formatDate(match.date)}
+          <span className={`text-xs font-medium ${textMuted}`}>
+            {match.status === "finished" ? "FT" : formatWeekdayDate(match.date)}
           </span>
         </div>
 
-        {/* Away Team */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: "0.75rem",
-            flex: 1,
-            minWidth: 0,
-          }}
-        >
-          <TeamLogo name={match.awayTeam} size={isFeatured ? 56 : 44} />
+        <div className="flex flex-col items-center gap-3 flex-1 min-w-0">
+          <TeamLogo name={match.awayTeam} logo={match.awayLogo} size={logoSize} />
           <span
-            style={{
-              fontFamily: "var(--font-heading)",
-              fontWeight: 700,
-              fontSize: isFeatured ? "0.875rem" : "0.8125rem",
-              color: isFeatured ? "white" : "var(--color-secondary)",
-              textAlign: "center",
-              lineHeight: 1.3,
-            }}
+            className={`font-heading font-bold text-center leading-tight ${textMain} ${
+              isFeatured ? "text-sm" : "text-[0.8125rem]"
+            }`}
           >
             {match.awayTeam}
           </span>
         </div>
       </div>
 
-      {/* Venue */}
+      {/* Sân & vòng đấu */}
       <div
-        style={{
-          marginTop: "2.25rem",
-          textAlign: "center",
-          fontSize: "0.8125rem",
-          color: isFeatured
-            ? "rgba(255,255,255,0.35)"
-            : "var(--color-gray-400)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "0.375rem",
-        }}
+        className={`mt-8 flex items-center justify-center gap-1.5 text-[0.8125rem] ${textMuted}`}
       >
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
           <circle cx="12" cy="10" r="3" />
         </svg>
-        {match.venue}
+        <span className="truncate">{match.venue}</span>
         {match.matchday && (
           <>
             <span>•</span>
-            <span>Vòng {match.matchday}</span>
+            <span className="shrink-0">Vòng {match.matchday}</span>
           </>
         )}
       </div>
+
+      {/* Hành động */}
+      {(match.ticketUrl || match.highlightUrl) && (
+        <div className="mt-auto pt-5 flex justify-center gap-3">
+          {match.ticketUrl && match.status !== "finished" && (
+            <a
+              href={match.ticketUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-primary text-xs px-5 py-2"
+            >
+              Mua Vé
+            </a>
+          )}
+          {match.highlightUrl && match.status === "finished" && (
+            <a
+              href={match.highlightUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`btn text-xs px-5 py-2 ${isFeatured ? "btn-outline" : "btn-outline-dark"}`}
+            >
+              Xem Highlight
+            </a>
+          )}
+        </div>
+      )}
     </div>
   );
 };

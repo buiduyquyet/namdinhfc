@@ -36,3 +36,58 @@ export function toISODate(value: string): string {
   const date = toDate(value)
   return date ? date.toISOString().slice(0, 10) : ''
 }
+
+const VN_PARTS_FORMATTER = new Intl.DateTimeFormat('en-CA', {
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: false,
+  timeZone: 'Asia/Ho_Chi_Minh',
+})
+
+/**
+ * Tách một mốc ISO thành ngày `YYYY-MM-DD` và giờ `HH:mm` **theo giờ Việt Nam**.
+ * Payload lưu ngày giờ ở UTC nên phải quy đổi, nếu không trận 19:15 tối sẽ lệch ngày.
+ */
+export function toVietnamDateParts(value: string): { date: string; time: string } {
+  const parsed = toDate(value)
+  if (!parsed) return { date: '', time: '' }
+
+  const parts = VN_PARTS_FORMATTER.formatToParts(parsed)
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? ''
+
+  const hour = get('hour') === '24' ? '00' : get('hour')
+
+  return {
+    date: `${get('year')}-${get('month')}-${get('day')}`,
+    time: `${hour}:${get('minute')}`,
+  }
+}
+
+const MONTH_FORMATTER = new Intl.DateTimeFormat('vi-VN', {
+  month: 'long',
+  year: 'numeric',
+  timeZone: 'Asia/Ho_Chi_Minh',
+})
+
+/** "tháng 3 năm 2026" — dùng làm tiêu đề nhóm ở trang Lịch thi đấu. */
+export function formatMonthLabel(value: string): string {
+  const date = toDate(value)
+  return date ? MONTH_FORMATTER.format(date) : ''
+}
+
+const WEEKDAY_FORMATTER = new Intl.DateTimeFormat('vi-VN', {
+  weekday: 'short',
+  day: '2-digit',
+  month: '2-digit',
+  timeZone: 'Asia/Ho_Chi_Minh',
+})
+
+/** "Th 7, 22/03" */
+export function formatWeekdayDate(value: string): string {
+  const date = toDate(value)
+  return date ? WEEKDAY_FORMATTER.format(date) : ''
+}

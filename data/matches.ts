@@ -1,4 +1,4 @@
-export type MatchStatus = "upcoming" | "live" | "finished";
+export type MatchStatus = "upcoming" | "live" | "finished" | "postponed";
 export type Competition = "V.League 1" | "Cúp Quốc Gia" | "AFC Champions League Two";
 
 export interface Match {
@@ -7,13 +7,19 @@ export interface Match {
     awayTeam: string;
     homeScore?: number;
     awayScore?: number;
+    /** Ngày thi đấu dạng `YYYY-MM-DD`. */
     date: string;
+    /** Giờ thi đấu dạng `HH:mm`. */
     time: string;
     venue: string;
     competition: Competition;
     status: MatchStatus;
     matchday?: number;
     isHomeGame: boolean;
+    homeLogo?: string;
+    awayLogo?: string;
+    ticketUrl?: string;
+    highlightUrl?: string;
 }
 
 export const TEAM_NAME = "Thép Xanh Nam Định";

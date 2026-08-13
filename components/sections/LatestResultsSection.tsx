@@ -1,10 +1,13 @@
 import SectionTitle from "@/components/SectionTitle";
 import MatchCard from "@/components/MatchCard";
-import { finishedMatches } from "@/data/matches";
+import { getLatestResults } from "@/lib/matches-api";
 import Link from "next/link";
 
-const LatestResultsSection = () => {
-  const latestResults = finishedMatches.slice(0, 3);
+export default async function LatestResultsSection() {
+  const latestResults = await getLatestResults(3);
+
+  // Chưa có kết quả nào thì ẩn hẳn section thay vì hiện khối rỗng
+  if (latestResults.length === 0) return null;
 
   return (
     <section className="section-alt">
@@ -19,13 +22,11 @@ const LatestResultsSection = () => {
           ))}
         </div>
         <div className="text-center mt-10">
-          <Link href="/fixtures" className="btn btn-outline-dark">
+          <Link href="/fixtures?tab=results" className="btn btn-outline-dark">
             Xem Tất Cả Lịch Thi Đấu
           </Link>
         </div>
       </div>
     </section>
   );
-};
-
-export default LatestResultsSection;
+}

@@ -251,11 +251,23 @@ export interface Match {
   awayTeam: string;
   homeLogo?: (string | null) | Media;
   awayLogo?: (string | null) | Media;
-  competition: string;
+  competition: 'V.League 1' | 'Cúp Quốc Gia' | 'AFC Champions League Two';
   status: 'Chưa đá' | 'Đã kết thúc' | 'Đang diễn ra' | 'Bị hoãn';
+  /**
+   * Chỉ điền khi trận đã kết thúc hoặc đang diễn ra.
+   */
   homeScore?: number | null;
   awayScore?: number | null;
   stadium?: string | null;
+  matchday?: number | null;
+  /**
+   * Hiện nút "Mua vé" ở trang Lịch thi đấu cho trận chưa đá.
+   */
+  ticketUrl?: string | null;
+  /**
+   * Hiện nút "Xem highlight" cho trận đã kết thúc.
+   */
+  highlightUrl?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -425,6 +437,9 @@ export interface MatchesSelect<T extends boolean = true> {
   homeScore?: T;
   awayScore?: T;
   stadium?: T;
+  matchday?: T;
+  ticketUrl?: T;
+  highlightUrl?: T;
   updatedAt?: T;
   createdAt?: T;
 }

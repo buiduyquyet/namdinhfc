@@ -9,11 +9,11 @@ Kế hoạch phát triển. Quy ước: `[ ]` chưa làm · `[x]` xong · 🔴 �
 
 ## Đang chờ xử lý ngay
 
-- [ ] 🔴 **Deploy và verify module tin tức** — sau khi deploy lên Vercel, kiểm tra:
+- [ ] 🔴 **Deploy và verify module tin tức + lịch thi đấu** — sau khi deploy lên Vercel, kiểm tra:
   - [ ] Bài **nháp KHÔNG** hiện với khách chưa đăng nhập (mở `/news` ở cửa sổ ẩn danh + gọi thẳng `/api/news`)
   - [ ] Ảnh bìa, rich text, bài liên quan render đúng
   - [ ] Slug tiếng Việt tự sinh đúng, không trùng
-- [ ] 🔴 **Sửa link `/fixtures` đang 404** — có ở `components/Footer.tsx` và `components/sections/LatestResultsSection.tsx`. Hết khi làm task "Trang lịch thi đấu" bên dưới.
+  - [ ] `/fixtures` hiện đúng sau khi nhập trận, giờ thi đấu không lệch ngày (Payload lưu UTC)
 - [ ] 🟡 **`.env` local** — đặt `NEXT_PUBLIC_SERVER_URL=http://localhost:3000/` khi dev ở máy, nếu không trang sẽ đọc dữ liệu và schema của bản deploy.
 
 ---
@@ -41,14 +41,16 @@ Kế hoạch phát triển. Quy ước: `[ ]` chưa làm · `[x]` xong · 🔴 �
 - [x] Trang `/news/[slug]` (metadata + OpenGraph, bài liên quan, 404 khi sai slug)
 - [x] `NewsSection` trang chủ + link "Tin Tức" ở Header/Footer
 
-### 2.2 Trang lịch thi đấu `/fixtures` 🔴
+### 2.2 Trang lịch thi đấu `/fixtures` ✅
 
-- [ ] Bổ sung collection `Matches`: `slug`, `matchday`, `isHomeGame`, `ticketUrl`, `highlightUrl`
-- [ ] `lib/matches-api.ts` — map `Matches` (Payload) ↔ `Match` (`data/matches.ts`), tách `upcoming` / `finished`
-- [ ] Trang `/fixtures`: tab **Lịch thi đấu** / **Kết quả**, nhóm theo tháng, lọc theo giải đấu
-- [ ] Thay `data/matches.ts` tĩnh trong `NextMatchSection` + `LatestResultsSection` bằng dữ liệu CMS
-- [ ] Giữ `data/matches.ts` làm fallback khi API lỗi
-- [ ] Bỏ link 404: Footer + nút "Xem Tất Cả Lịch Thi Đấu"
+- [x] Bổ sung collection `Matches`: mở `access.read`, thêm `matchday` / `ticketUrl` / `highlightUrl`, `competition` chuyển sang select
+- [x] `lib/matches-api.ts` — map `Matches` (Payload) ↔ `Match`, `groupMatchesByMonth`, quy đổi giờ UTC → giờ VN
+- [x] Trang `/fixtures`: tab **Lịch thi đấu** / **Kết quả**, nhóm theo tháng, lọc theo giải đấu
+- [x] `NextMatchSection` + `LatestResultsSection` đọc dữ liệu CMS
+- [x] Giữ `data/matches.ts` làm fallback khi API lỗi
+- [x] Sửa link 404 ở Header, Footer và nút "Xem Tất Cả Lịch Thi Đấu"
+- [x] Sửa bug `MatchCard` (luôn hiện "Trận kế tiếp" + badge LIVE, chữ trắng trên nền trắng) + migrate sang Tailwind
+- [ ] Nhập lịch thi đấu mùa giải thật vào CMS — hiện collection đang trống nên trang hiện empty state
 
 ### 2.3 Trang chi tiết cầu thủ `/squad/[slug]` 🔴
 
@@ -63,7 +65,7 @@ Kế hoạch phát triển. Quy ước: `[ ]` chưa làm · `[x]` xong · 🔴 �
 ## Đợt 3 — Chất lượng & đồng nhất
 
 - [ ] 🟡 **Hợp nhất 2 `SectionTitle`** (`components/SectionTitle.tsx` và `components/about/SectionTitle.tsx`) thành một component có prop `highlight`
-- [ ] 🟡 **Migrate inline style → Tailwind**: `LeagueTable` (~30 chỗ), `Footer` (~26), `MatchCard` (~15)
+- [ ] 🟡 **Migrate inline style → Tailwind**: `LeagueTable` (~30 chỗ), `Footer` (~26). `MatchCard` đã xong, dùng làm mẫu
 - [ ] 🟡 **Bỏ `<style jsx global>`** ở `Header`, `Footer`, `StatsCounter` — chuyển sang Tailwind responsive utility
 - [ ] 🟢 **Sửa typo prop `chidlren`** trong `components/SectionDark.tsx` → dùng `children` thật của React
 - [ ] 🟡 **Bảng xếp hạng động** — tạo collection `LeagueTable` hoặc sync từ API-Football, thay `data/league-table.ts` tĩnh
@@ -117,8 +119,8 @@ Chi tiết ở mục 7 của [.claude/DESIGN_SYSTEM.md](.claude/DESIGN_SYSTEM.md
 | Vấn đề | File | Đợt xử lý |
 |---|---|---|
 | `<style jsx global>` | `Header`, `Footer`, `StatsCounter` | 3 |
-| Inline style dày đặc | `LeagueTable`, `Footer`, `MatchCard` | 3 |
+| Inline style dày đặc | `LeagueTable`, `Footer` | 3 |
 | 2 `SectionTitle` trùng chức năng | `components/`, `components/about/` | 3 |
 | Typo prop `chidlren` | `SectionDark.tsx` | 3 |
-| Dữ liệu tĩnh chưa nối CMS | `data/matches.ts`, `data/league-table.ts` | 2.2 / 3 |
+| Dữ liệu tĩnh chưa nối CMS | `data/league-table.ts` | 3 |
 | Media lưu ổ đĩa cục bộ | `collections/Media.ts` | 4 |
