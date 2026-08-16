@@ -12,10 +12,7 @@ export const Players: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'number', 'position', 'dataSource'],
     components: {
-      beforeList: [
-        '@/components/admin/SyncButton',
-        '@/components/admin/ImportPlayersButton',
-      ],
+      beforeList: ['@/components/admin/ImportPlayersButton'],
     }
   },
   fields: [
@@ -37,8 +34,36 @@ export const Players: CollectionConfig = {
         description: 'Dùng để tính độ tuổi trung bình hiển thị ở trang Đội hình.',
       },
     },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'height',
+          type: 'number',
+          label: 'Chiều cao (cm)',
+          min: 100,
+          max: 250,
+          admin: { width: '50%', step: 1, placeholder: 'VD: 178' },
+        },
+        {
+          name: 'weight',
+          type: 'number',
+          label: 'Cân nặng (kg)',
+          min: 30,
+          max: 150,
+          admin: { width: '50%', step: 1, placeholder: 'VD: 72' },
+        },
+      ],
+    },
     { name: 'image', type: 'upload', relationTo: 'media', label: 'Ảnh đại diện (Upload)' },
-    { name: 'imageUrl', type: 'text', label: 'URL Ảnh từ API' },
+    {
+      name: 'imageUrl',
+      type: 'text',
+      label: 'URL ảnh (link ngoài)',
+      admin: {
+        description: 'Dùng khi ảnh nằm ở nơi khác. Bỏ trống nếu đã upload ảnh ở trên.',
+      },
+    },
     {
       name: 'dataSource',
       type: 'select',
@@ -51,17 +76,5 @@ export const Players: CollectionConfig = {
         description: 'Cho biết bản ghi này đến từ đâu. Trang public có thể lọc theo nguồn trong Cấu hình trang.',
       },
     },
-    {
-      name: 'stats',
-      type: 'group',
-      label: 'Thống kê (Mùa giải hiện tại)',
-      fields: [
-        { name: 'matchesPlayed', type: 'number', label: 'Số trận đăng ký', defaultValue: 0 },
-        { name: 'goals', type: 'number', label: 'Bàn thắng', defaultValue: 0 },
-        { name: 'assists', type: 'number', label: 'Kiến tạo', defaultValue: 0 },
-        { name: 'yellowCards', type: 'number', label: 'Thẻ vàng', defaultValue: 0 },
-        { name: 'redCards', type: 'number', label: 'Thẻ đỏ', defaultValue: 0 },
-      ]
-    }
   ],
 }

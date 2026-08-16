@@ -1,4 +1,3 @@
-import { default as default_dda9b9a83cae290eef11bbf7f22378c7 } from '@/components/admin/SyncButton'
 import { default as default_b4f771812005c2a08273be1d68c87cd7 } from '@/components/admin/ImportPlayersButton'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -26,7 +25,6 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 export const importMap = {
-  "@/components/admin/SyncButton#default": default_dda9b9a83cae290eef11bbf7f22378c7,
   "@/components/admin/ImportPlayersButton#default": default_b4f771812005c2a08273be1d68c87cd7,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,

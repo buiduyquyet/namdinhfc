@@ -21,10 +21,14 @@ export default async function SquadPage() {
       )
     : 0;
 
-  const totalGoals = players.reduce(
-    (acc, p) => acc + (p.stats?.goals || 0),
-    0
-  );
+  // Cùng cách tính với độ tuổi: chỉ lấy trung bình trên cầu thủ đã khai chiều cao
+  const playersWithHeight = players.filter((p) => (p.height ?? 0) > 0);
+  const averageHeight = playersWithHeight.length
+    ? Math.round(
+        playersWithHeight.reduce((acc, p) => acc + (p.height ?? 0), 0) /
+          playersWithHeight.length
+      )
+    : 0;
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -54,7 +58,7 @@ export default async function SquadPage() {
         totalPlayers={totalPlayers}
         foreignPlayers={foreignPlayers}
         averageAge={averageAge}
-        totalGoals={totalGoals}
+        averageHeight={averageHeight}
       />
     </main>
   );

@@ -8,15 +8,12 @@ export interface Player {
     position: Position;
     nationality: string;
     age: number;
+    /** Chiều cao tính bằng cm. */
+    height?: number;
+    /** Cân nặng tính bằng kg. */
+    weight?: number;
     image?: string;
     isFeatured?: boolean;
-    stats?: {
-        appearances: number;
-        goals: number;
-        assists: number;
-        yellowCards?: number;
-        redCards?: number;
-    };
     bio?: string;
 }
 
@@ -38,7 +35,6 @@ export const players: Player[] = [
         nationality: "Việt Nam",
         age: 33,
         isFeatured: true,
-        stats: { appearances: 28, goals: 0, assists: 0 },
         bio: "Thủ môn số 1 của CLB và ĐTQG Việt Nam, nổi tiếng với những pha cứu thua xuất sắc.",
     },
     {
@@ -49,7 +45,6 @@ export const players: Player[] = [
         position: "goalkeeper",
         nationality: "Việt Nam",
         age: 27,
-        stats: { appearances: 8, goals: 0, assists: 0 },
     },
     {
         id: "gk-03",
@@ -59,7 +54,6 @@ export const players: Player[] = [
         position: "goalkeeper",
         nationality: "Việt Nam",
         age: 22,
-        stats: { appearances: 2, goals: 0, assists: 0 },
     },
 
     // Defenders
@@ -71,7 +65,6 @@ export const players: Player[] = [
         position: "defender",
         nationality: "Việt Nam",
         age: 30,
-        stats: { appearances: 24, goals: 1, assists: 3 },
     },
     {
         id: "df-02",
@@ -81,7 +74,6 @@ export const players: Player[] = [
         position: "defender",
         nationality: "Việt Nam",
         age: 29,
-        stats: { appearances: 22, goals: 0, assists: 2 },
     },
     {
         id: "df-03",
@@ -91,7 +83,6 @@ export const players: Player[] = [
         position: "defender",
         nationality: "Việt Nam",
         age: 28,
-        stats: { appearances: 26, goals: 2, assists: 1 },
     },
     {
         id: "df-04",
@@ -101,7 +92,6 @@ export const players: Player[] = [
         position: "defender",
         nationality: "Brazil",
         age: 29,
-        stats: { appearances: 25, goals: 3, assists: 0 },
     },
     {
         id: "df-05",
@@ -111,7 +101,6 @@ export const players: Player[] = [
         position: "defender",
         nationality: "Việt Nam",
         age: 26,
-        stats: { appearances: 18, goals: 0, assists: 1 },
     },
     {
         id: "df-06",
@@ -121,7 +110,6 @@ export const players: Player[] = [
         position: "defender",
         nationality: "Brazil",
         age: 28,
-        stats: { appearances: 20, goals: 1, assists: 0 },
     },
 
     // Midfielders
@@ -134,7 +122,6 @@ export const players: Player[] = [
         nationality: "Việt Nam",
         age: 31,
         isFeatured: true,
-        stats: { appearances: 22, goals: 3, assists: 7 },
         bio: "Tiền vệ tài hoa, được mệnh danh là 'phù thuỷ' của bóng đá Việt Nam với kỹ thuật điêu luyện.",
     },
     {
@@ -146,7 +133,6 @@ export const players: Player[] = [
         nationality: "Brazil",
         age: 27,
         isFeatured: true,
-        stats: { appearances: 26, goals: 5, assists: 9 },
         bio: "Tiền vệ sáng tạo người Brazil, trụ cột tuyến giữa với khả năng kiến tạo xuất sắc.",
     },
     {
@@ -157,7 +143,6 @@ export const players: Player[] = [
         position: "midfielder",
         nationality: "Brazil",
         age: 28,
-        stats: { appearances: 24, goals: 4, assists: 3 },
     },
     {
         id: "mf-04",
@@ -167,7 +152,6 @@ export const players: Player[] = [
         position: "midfielder",
         nationality: "Việt Nam",
         age: 25,
-        stats: { appearances: 20, goals: 2, assists: 4 },
     },
     {
         id: "mf-05",
@@ -177,7 +161,6 @@ export const players: Player[] = [
         position: "midfielder",
         nationality: "Việt Nam",
         age: 27,
-        stats: { appearances: 18, goals: 1, assists: 2 },
     },
     {
         id: "mf-06",
@@ -187,7 +170,6 @@ export const players: Player[] = [
         position: "midfielder",
         nationality: "Congo",
         age: 26,
-        stats: { appearances: 22, goals: 2, assists: 3 },
     },
     {
         id: "mf-07",
@@ -197,7 +179,6 @@ export const players: Player[] = [
         position: "midfielder",
         nationality: "Việt Nam",
         age: 24,
-        stats: { appearances: 15, goals: 1, assists: 2 },
     },
     {
         id: "mf-08",
@@ -207,7 +188,6 @@ export const players: Player[] = [
         position: "midfielder",
         nationality: "Việt Nam",
         age: 23,
-        stats: { appearances: 12, goals: 0, assists: 1 },
     },
 
     // Forwards
@@ -220,7 +200,6 @@ export const players: Player[] = [
         nationality: "Brazil",
         age: 30,
         isFeatured: true,
-        stats: { appearances: 26, goals: 22, assists: 5 },
         bio: "Chân sút số 1 của đội, Vua phá lưới V.League với bản năng ghi bàn vượt trội.",
     },
     {
@@ -232,7 +211,6 @@ export const players: Player[] = [
         nationality: "Brazil",
         age: 27,
         isFeatured: true,
-        stats: { appearances: 24, goals: 12, assists: 6 },
         bio: "Tiền đạo tốc độ với khả năng đi bóng và dứt điểm sắc bén.",
     },
     {
@@ -243,7 +221,6 @@ export const players: Player[] = [
         position: "forward",
         nationality: "Việt Nam",
         age: 30,
-        stats: { appearances: 20, goals: 6, assists: 4 },
     },
     {
         id: "fw-04",
@@ -253,7 +230,6 @@ export const players: Player[] = [
         position: "forward",
         nationality: "Việt Nam",
         age: 24,
-        stats: { appearances: 16, goals: 4, assists: 2 },
     },
 ];
 

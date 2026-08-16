@@ -4,7 +4,8 @@ interface SquadStatsProps {
   totalPlayers: number;
   foreignPlayers: number;
   averageAge: number;
-  totalGoals: number;
+  /** Chiều cao trung bình (cm), `0` khi chưa cầu thủ nào khai chiều cao. */
+  averageHeight: number;
 }
 
 interface StatItemProps {
@@ -35,7 +36,7 @@ const SquadStats = ({
   totalPlayers,
   foreignPlayers,
   averageAge,
-  totalGoals,
+  averageHeight,
 }: SquadStatsProps) => {
   return (
     <section className="bg-secondary py-12 md:py-16 lg:py-20 text-white overflow-hidden relative">
@@ -48,7 +49,11 @@ const SquadStats = ({
             label="Độ tuổi trung bình"
             delay={200}
           />
-          <StatItem value={totalGoals} label="Tổng bàn thắng" delay={300} />
+          <StatItem
+            value={averageHeight > 0 ? `${averageHeight} cm` : "—"}
+            label="Chiều cao trung bình"
+            delay={300}
+          />
         </div>
       </div>
 

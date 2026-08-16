@@ -68,8 +68,10 @@ export async function POST(req: NextRequest) {
             number: row.number,
             position: row.position,
             nationality: row.nationality,
+            dateOfBirth: row.dateOfBirth,
+            height: row.height,
+            weight: row.weight,
             dataSource: 'excel',
-            stats: row.stats,
           },
         })
         inserted++

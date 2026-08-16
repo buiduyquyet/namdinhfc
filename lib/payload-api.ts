@@ -1,5 +1,5 @@
 import { Player, Position } from '@/data/players'
-import type { PlayerSourceFilter } from '@/lib/player-source'
+import { isPlayerSourceFilter, type PlayerSourceFilter } from '@/lib/player-source'
 import { payloadFetch, resolveMediaUrl } from '@/lib/payload-rest'
 import type { PayloadListResponse } from '@/lib/payload-rest'
 import type { Player as PayloadPlayer, SiteSetting } from '@/payload-types'
@@ -41,12 +41,13 @@ function calculateAge(dateOfBirth?: string | null): number {
 
 /**
  * Đọc nguồn dữ liệu cầu thủ đang được chọn trong global "Cấu hình trang".
- * Trả về `all` nếu global chưa được lưu lần nào hoặc gọi lỗi.
+ * Trả về `all` nếu global chưa được lưu lần nào, gọi lỗi, hoặc giá trị đã lưu
+ * là một nguồn không còn tồn tại (ví dụ `api-football` cũ).
  */
 export async function getActivePlayerSource(): Promise<PlayerSourceFilter> {
   try {
     const data = await payloadFetch<Partial<SiteSetting>>('globals/site-settings')
-    return data.playerDataSource || 'all'
+    return isPlayerSourceFilter(data.playerDataSource) ? data.playerDataSource : 'all'
   } catch (error) {
     console.error('Failed to fetch site settings from Payload CMS:', error)
     return 'all'
@@ -71,14 +72,9 @@ export async function getPayloadPlayers(): Promise<Player[]> {
       position: mapPosition(doc.position),
       nationality: doc.nationality || 'Việt Nam',
       age: calculateAge(doc.dateOfBirth),
+      height: doc.height ?? undefined,
+      weight: doc.weight ?? undefined,
       image: resolveImageUrl(doc),
-      stats: {
-        appearances: doc.stats?.matchesPlayed || 0,
-        goals: doc.stats?.goals || 0,
-        assists: doc.stats?.assists || 0,
-        yellowCards: doc.stats?.yellowCards || 0,
-        redCards: doc.stats?.redCards || 0,
-      },
       isFeatured: false,
     }))
   } catch (error) {

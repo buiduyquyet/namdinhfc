@@ -22,7 +22,7 @@ Kế hoạch phát triển. Quy ước: `[ ]` chưa làm · `[x]` xong · 🔴 �
 
 - [x] Generate `payload-types.ts` + script `generate:types` / `generate:importmap` / `typecheck`
 - [x] Bỏ interface CMS khai tay trong `lib/payload-api.ts`, dùng type sinh tự động
-- [x] Chặn auth cho `/api/sync-players` (trước đó ai cũng GET được để ghi DB)
+- [x] Chặn auth cho `/api/sync-players` (trước đó ai cũng GET được để ghi DB) — sau đó đã gỡ hẳn, xem dưới
 - [x] Sửa `averageAge` NaN ở trang Đội hình + thêm field `dateOfBirth` cho Players
 - [x] Trang `/contact`
 - [x] Viết lại README theo dự án thật
@@ -55,7 +55,7 @@ Kế hoạch phát triển. Quy ước: `[ ]` chưa làm · `[x]` xong · 🔴 �
 ### 2.3 Trang chi tiết cầu thủ `/squad/[slug]` 🔴
 
 - [ ] Thêm field cho Players: `slug` (tự sinh từ tên, unique), `bio` (richText), `height`, `weight`, `preferredFoot`, `joinedDate`
-- [ ] Trang `/squad/[slug]`: ảnh lớn, thông tin cá nhân, thống kê mùa giải, tiểu sử
+- [ ] Trang `/squad/[slug]`: ảnh lớn, thông tin cá nhân (ngày sinh, chiều cao, cân nặng), tiểu sử
 - [ ] Sửa `FeaturedPlayersSection` — hiện đang `<Link>` tới trang chưa tồn tại
 - [ ] `PlayerCard` link sang trang chi tiết ở cả trang `/squad`
 - [ ] `generateMetadata` cho SEO từng cầu thủ
@@ -81,7 +81,7 @@ Kế hoạch phát triển. Quy ước: `[ ]` chưa làm · `[x]` xong · 🔴 �
 - [ ] 🟡 GitHub Action chạy `typecheck` + `lint` + `build` trên mỗi PR
 - [ ] 🟡 Tách môi trường staging / production (DB + `NEXT_PUBLIC_SERVER_URL` riêng) — hiện local đang dùng chung Atlas với bản deploy
 - [ ] 🟢 Thêm `.env.example` vào repo
-- [ ] 🟢 Rate limit cho `/api/import-players` và `/api/sync-players`
+- [ ] 🟢 Rate limit cho `/api/import-players`
 
 ---
 

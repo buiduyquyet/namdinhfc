@@ -9,13 +9,12 @@ export interface ParsedPlayerRow {
   number: number
   position: PlayerPosition
   nationality: string
-  stats: {
-    matchesPlayed: number
-    goals: number
-    assists: number
-    yellowCards: number
-    redCards: number
-  }
+  /** Ngày sinh dạng ISO — `undefined` khi cột trống hoặc không đọc được. */
+  dateOfBirth?: string
+  /** Chiều cao (cm) — `undefined` khi cột trống hoặc ngoài khoảng hợp lệ. */
+  height?: number
+  /** Cân nặng (kg) — `undefined` khi cột trống hoặc ngoài khoảng hợp lệ. */
+  weight?: number
 }
 
 export interface RowError {
@@ -37,11 +36,9 @@ const COLUMNS = [
   { key: 'number', header: 'Số áo', width: 10, aliases: ['number', 'shirt number', 'so ao'], example: 10 },
   { key: 'position', header: 'Vị trí', width: 14, aliases: ['position', 'vi tri'], example: 'Tiền vệ' },
   { key: 'nationality', header: 'Quốc tịch', width: 16, aliases: ['nationality', 'quoc tich'], example: 'Việt Nam' },
-  { key: 'matchesPlayed', header: 'Số trận', width: 10, aliases: ['matches', 'appearances', 'so tran'], example: 0 },
-  { key: 'goals', header: 'Bàn thắng', width: 12, aliases: ['goals', 'ban thang'], example: 0 },
-  { key: 'assists', header: 'Kiến tạo', width: 12, aliases: ['assists', 'kien tao'], example: 0 },
-  { key: 'yellowCards', header: 'Thẻ vàng', width: 12, aliases: ['yellow cards', 'the vang'], example: 0 },
-  { key: 'redCards', header: 'Thẻ đỏ', width: 12, aliases: ['red cards', 'the do'], example: 0 },
+  { key: 'dateOfBirth', header: 'Ngày sinh', width: 16, aliases: ['date of birth', 'dob', 'birthday', 'ngay sinh'], example: '01/02/1998' },
+  { key: 'height', header: 'Chiều cao (cm)', width: 16, aliases: ['height', 'chieu cao', 'chieu cao (cm)'], example: 178 },
+  { key: 'weight', header: 'Cân nặng (kg)', width: 16, aliases: ['weight', 'can nang', 'can nang (kg)'], example: 72 },
 ] as const
 
 type ColumnKey = (typeof COLUMNS)[number]['key']
@@ -98,6 +95,44 @@ function cellToNumber(cell: ExcelJS.Cell | undefined): number | null {
 
   const parsed = Number(text)
   return Number.isFinite(parsed) ? Math.trunc(parsed) : null
+}
+
+/** Ghép ngày sinh về ISO ở mốc 00:00 UTC, `undefined` nếu ngày vô lý. */
+function toBirthDateISO(year: number, month: number, day: number): string | undefined {
+  if (year < 1900 || year > new Date().getUTCFullYear()) return undefined
+  if (month < 1 || month > 12 || day < 1 || day > 31) return undefined
+
+  const date = new Date(Date.UTC(year, month - 1, day))
+  // Bắt các ngày tràn tháng kiểu 31/02
+  if (date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return undefined
+
+  return date.toISOString()
+}
+
+/**
+ * Đọc ô ngày sinh. Nhận cả ô định dạng Date của Excel lẫn chuỗi `dd/MM/yyyy`,
+ * `dd-MM-yyyy` và `yyyy-MM-dd`. Ô trống hoặc không đọc được trả `undefined` —
+ * ngày sinh là tuỳ chọn nên không làm hỏng cả dòng.
+ */
+function parseDateOfBirth(cell: ExcelJS.Cell | undefined): string | undefined {
+  const raw = cell?.value
+
+  if (raw instanceof Date) {
+    return toBirthDateISO(raw.getUTCFullYear(), raw.getUTCMonth() + 1, raw.getUTCDate())
+  }
+
+  const text = cellToString(cell)
+  if (!text) return undefined
+
+  // yyyy-MM-dd (bao gồm cả chuỗi ISO đầy đủ)
+  const iso = text.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/)
+  if (iso) return toBirthDateISO(Number(iso[1]), Number(iso[2]), Number(iso[3]))
+
+  // dd/MM/yyyy hoặc dd-MM-yyyy — thứ tự ngày/tháng theo cách viết của người Việt
+  const vi = text.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/)
+  if (vi) return toBirthDateISO(Number(vi[3]), Number(vi[2]), Number(vi[1]))
+
+  return undefined
 }
 
 /** Dò hàng tiêu đề (hàng đầu tiên khớp được ít nhất cột `name`). */
@@ -167,7 +202,15 @@ export async function parsePlayersWorkbook(buffer: ArrayBuffer): Promise<ParseRe
     return index === undefined ? undefined : row.getCell(index)
   }
 
-  const statAt = (row: ExcelJS.Row, key: ColumnKey) => Math.max(0, cellToNumber(cellAt(row, key)) ?? 0)
+  /**
+   * Chiều cao / cân nặng là tuỳ chọn: cột trống hoặc số vô lý thì bỏ qua,
+   * không đánh hỏng cả dòng (khớp với `min`/`max` khai trong collection Players).
+   */
+  const measureAt = (row: ExcelJS.Row, key: ColumnKey, min: number, max: number) => {
+    const value = cellToNumber(cellAt(row, key))
+    if (value === null || value < min || value > max) return undefined
+    return value
+  }
 
   for (let rowNumber = headerRow + 1; rowNumber <= sheet.rowCount; rowNumber++) {
     const row = sheet.getRow(rowNumber)
@@ -205,13 +248,9 @@ export async function parsePlayersWorkbook(buffer: ArrayBuffer): Promise<ParseRe
       number: shirtNumber,
       position,
       nationality: cellToString(cellAt(row, 'nationality')) || 'Việt Nam',
-      stats: {
-        matchesPlayed: statAt(row, 'matchesPlayed'),
-        goals: statAt(row, 'goals'),
-        assists: statAt(row, 'assists'),
-        yellowCards: statAt(row, 'yellowCards'),
-        redCards: statAt(row, 'redCards'),
-      },
+      dateOfBirth: parseDateOfBirth(cellAt(row, 'dateOfBirth')),
+      height: measureAt(row, 'height', 100, 250),
+      weight: measureAt(row, 'weight', 30, 150),
     })
   }
 

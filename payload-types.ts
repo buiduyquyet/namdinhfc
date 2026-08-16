@@ -168,19 +168,17 @@ export interface Player {
    * Dùng để tính độ tuổi trung bình hiển thị ở trang Đội hình.
    */
   dateOfBirth?: string | null;
+  height?: number | null;
+  weight?: number | null;
   image?: (string | null) | Media;
+  /**
+   * Dùng khi ảnh nằm ở nơi khác. Bỏ trống nếu đã upload ảnh ở trên.
+   */
   imageUrl?: string | null;
   /**
    * Cho biết bản ghi này đến từ đâu. Trang public có thể lọc theo nguồn trong Cấu hình trang.
    */
-  dataSource: 'api-football' | 'excel' | 'manual';
-  stats?: {
-    matchesPlayed?: number | null;
-    goals?: number | null;
-    assists?: number | null;
-    yellowCards?: number | null;
-    redCards?: number | null;
-  };
+  dataSource: 'excel' | 'manual';
   updatedAt: string;
   createdAt: string;
 }
@@ -391,18 +389,11 @@ export interface PlayersSelect<T extends boolean = true> {
   position?: T;
   nationality?: T;
   dateOfBirth?: T;
+  height?: T;
+  weight?: T;
   image?: T;
   imageUrl?: T;
   dataSource?: T;
-  stats?:
-    | T
-    | {
-        matchesPlayed?: T;
-        goals?: T;
-        assists?: T;
-        yellowCards?: T;
-        redCards?: T;
-      };
   updatedAt?: T;
   createdAt?: T;
 }
@@ -510,7 +501,7 @@ export interface SiteSetting {
   /**
    * Trang Đội hình chỉ hiển thị cầu thủ có Nguồn dữ liệu trùng với lựa chọn này. Chọn "Tất cả các nguồn" để không lọc.
    */
-  playerDataSource: 'all' | 'api-football' | 'excel' | 'manual';
+  playerDataSource: 'all' | 'excel' | 'manual';
   updatedAt?: string | null;
   createdAt?: string | null;
 }

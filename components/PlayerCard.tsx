@@ -7,9 +7,15 @@ interface PlayerCardProps {
 }
 
 const PlayerCard = ({ player, index = 0 }: PlayerCardProps) => {
+    // Chiều cao / cân nặng là tuỳ chọn — chỉ hiện phần đã nhập
+    const details = [
+        player.height ? `${player.height} cm` : null,
+        player.weight ? `${player.weight} kg` : null,
+    ].filter((detail): detail is string => detail !== null);
+
     return (
         <div
-            className="group relative overflow-hidden cursor-pointer animate-fade-in-up bg-linear-to-br from-primary to-primary-dark rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+            className="h-100 group relative overflow-hidden cursor-pointer animate-fade-in-up bg-linear-to-br from-primary to-primary-dark rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
             style={{
                 animationDelay: `${index * 80}ms`,
             }}
@@ -26,25 +32,25 @@ const PlayerCard = ({ player, index = 0 }: PlayerCardProps) => {
             </div>
 
             {/* Large Background Number - Restored to Old Position (Top Right) */}
-            <span className="absolute -top-2 -right-1 text-9xl font-black text-white/30 leading-none select-none italic z-0 pointer-events-none">
+            <span className="absolute -top-2 right-1 text-9xl font-black text-white/30 leading-none select-none italic z-0 pointer-events-none">
                 {player.number}
             </span>
 
             {/* Top Area: Avatar & Badge */}
-            <div className="relative pt-16 pb-6 px-6 flex flex-col items-center justify-center z-10">
+            <div className="relative pt-[50%] pb-6 px-6 flex flex-col items-center justify-center z-10">
                 {/* Position badge */}
                 <div className="absolute top-5 left-5 bg-white/20 text-white backdrop-blur-md border border-white/20 shadow-sm z-20 font-bold uppercase text-[10px] tracking-widest px-3 py-1.5 rounded-full">
                     {positionLabels[player.position]}
                 </div>
 
                 {/* Avatar / Photo */}
-                <div className="w-32 h-32 rounded-full overflow-hidden bg-white/10 flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform duration-500 border-4 border-white/80 relative z-10">
+                <div className="w-40 h-40 rounded-full overflow-hidden bg-white/10 flex items-center justify-center shadow-xl group-hover:scale-105 transition-transform duration-500 border-4 border-white/80 relative z-10">
                     {player.image ? (
                         <Image
                             src={player?.image || ""}
                             alt={player.name}
-                            width={120}
-                            height={120}
+                            width={150}
+                            height={150}
                             className="object-cover w-full h-full"
                         />
                     ) : (
@@ -72,27 +78,16 @@ const PlayerCard = ({ player, index = 0 }: PlayerCardProps) => {
                     <h3 className="font-heading font-extrabold text-xl text-white leading-tight truncate pr-2 drop-shadow-sm">
                         {player.name}
                     </h3>
-                    <span className="font-heading font-black text-2xl text-white leading-none shrink-0 drop-shadow-md">
-                        #{player.number}
-                    </span>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm text-white/80 font-medium mb-4">
+                <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm text-white/80 font-medium mb-4">
                     <span>{player.nationality}</span>
+                    {details.map((detail) => (
+                        <span key={detail} className="flex items-center gap-2 before:content-[''] before:block before:w-1 before:h-1 before:rounded-full before:bg-white/40">
+                            {detail}
+                        </span>
+                    ))}
                 </div>
-
-                {player.stats && (
-                    <div className="mt-4 grid grid-cols-2 gap-2 border-t border-white/20 pt-4">
-                        <div className="flex flex-col">
-                            <p className="text-white font-black text-xl drop-shadow-sm">{player.stats.appearances}</p>
-                            <p className="text-white/70 text-[10px] uppercase tracking-widest font-bold mt-0.5">Trận đấu</p>
-                        </div>
-                        <div className="flex flex-col items-end">
-                            <p className="text-white font-black text-xl drop-shadow-sm">{player.stats.goals}</p>
-                            <p className="text-white/70 text-[10px] uppercase tracking-widest font-bold mt-0.5">Bàn thắng</p>
-                        </div>
-                    </div>
-                )}
             </div>
         </div>
     );

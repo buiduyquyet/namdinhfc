@@ -4,9 +4,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    remotePatterns: [
-      { protocol: "https", hostname: "media.api-sports.io" },
-    ],
+    // Ảnh cầu thủ / tin tức đều upload qua Payload (/media) nên chưa cần domain ngoài.
+    // Thêm host vào đây nếu dùng field "URL ảnh (link ngoài)".
+    remotePatterns: [],
   },
 };
 

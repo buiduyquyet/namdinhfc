@@ -131,7 +131,7 @@ Khác: `.gradient-text` (chữ gradient). Đã có `@media (prefers-reduced-moti
 
 | Component | Loại | Mô tả |
 |---|---|---|
-| `PlayerCard` | server | Card cầu thủ: gradient primary, watermark logo, số áo lớn nền, badge vị trí, avatar tròn, 2 ô stats |
+| `PlayerCard` | server | Card cầu thủ: gradient primary, watermark logo, số áo lớn nền, badge vị trí, avatar tròn, dòng quốc tịch · chiều cao · cân nặng |
 | `MatchCard` | server | Card trận đấu: `variant="default" \| "featured"`, prop `title` cho biến thể featured. Tự đổi tỉ số ↔ giờ theo `status`, hiện logo đội nếu có (không thì viết tắt tên), nút Mua vé / Xem highlight |
 | `LeagueTable` | server | Bảng xếp hạng V.League |
 | `StatsCounter` | client | Dãy số liệu đếm — nhận `items: { value, label, suffix? }[]` |
@@ -156,7 +156,7 @@ Export qua barrel `components/sections/index.ts`.
 - `components/about/`: `ClubHistory`, `Timeline`, `StadiumSection`, `SectionTitle`
 - `components/news/`: `NewsCard`, `CategoryTabs`, `Pagination`, `ArticleContent`
 - `components/fixtures/`: `FixtureFilters` (tab Lịch/Kết quả + lọc giải), `MatchMonthGroup` (nhóm trận theo tháng)
-- `components/admin/`: `SyncButton`, `ImportPlayersButton` — inject vào Payload admin qua `admin.components.beforeList` trong `collections/Players.ts`
+- `components/admin/`: `ImportPlayersButton` — inject vào Payload admin qua `admin.components.beforeList` trong `collections/Players.ts`
 
 ---
 

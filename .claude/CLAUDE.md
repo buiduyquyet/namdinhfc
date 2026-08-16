@@ -18,7 +18,7 @@ app/
     admin/[[...segments]]/page.tsx
     api/[...slug]/route.ts      # REST + GraphQL của Payload
   api/               # Route handler nghiệp vụ riêng (không phải của Payload)
-    sync-players/, import-players/
+    import-players/
   globals.css        # Design system duy nhất của toàn site
 
 collections/         # Payload collections: Users, Players, News, Matches, Media
@@ -72,7 +72,8 @@ public/              # Ảnh tĩnh; `public/media` là nơi Payload lưu file up
 - `NEXT_PUBLIC_SERVER_URL` quyết định page đọc dữ liệu từ đâu. Khi dev ở máy phải đặt `http://localhost:3000/`,
   nếu trỏ về site đã deploy thì trang sẽ đọc **schema của bản deploy** — collection mới thêm trả 403 cho tới khi deploy.
 - `getPayload({ config })` chỉ dùng trong `app/api/**/route.ts` (server-side write).
-- **Luôn có fallback**: lỗi fetch → `console.error` + trả mảng rỗng / dữ liệu tĩnh, không để page crash (xem `lib/api-football.ts`, `lib/payload-api.ts`).
+- **Nguồn dữ liệu cầu thủ / trận đấu là Payload CMS** (nhập tay trong admin hoặc import Excel). Không tích hợp API bóng đá bên ngoài — dữ liệu của họ không chính xác, đã gỡ bỏ.
+- **Luôn có fallback**: lỗi fetch → `console.error` + trả mảng rỗng / dữ liệu tĩnh, không để page crash (xem `lib/matches-api.ts`, `lib/payload-api.ts`).
   Phân biệt rõ: **API lỗi** → fallback `data/*.ts`; **API trả 0 bản ghi** → trả rỗng để UI hiện empty state, không dựng dữ liệu giả (xem `lib/matches-api.ts`).
 - Ngày giờ từ Payload là UTC. Đổi sang giờ Việt Nam bằng helper trong `lib/format-date.ts`, **không** dùng `new Date(x).getHours()` trực tiếp.
 - Mapping giữa 2 domain (Payload dùng vị trí tiếng Việt, UI dùng `Position` tiếng Anh) đặt trong `lib/`, không rải trong component.
@@ -130,7 +131,7 @@ Section nền tối/gradient → dùng `<SectionDark>` (bọc sẵn `SectionBack
 
 - Commit message theo mẫu đang dùng: `[Fix]: ...`, `[Update]: ...`, `[Refactor]: ...` (hoặc `fix: ...`). Nội dung tiếng Anh.
 - Branch chính: `master`.
-- **Không commit `.env`** (đã ignore). Biến môi trường đang dùng: `MONGODB_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, `API_FOOTBALL_KEY`, `API_FOOTBALL_TEAM_ID`, `API_FOOTBALL_SEASON`.
+- **Không commit `.env`** (đã ignore). Biến môi trường đang dùng: `MONGODB_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`.
 
 ## 5. Lệnh
 
