@@ -500,6 +500,23 @@
   background: var(--color-gray-400);
 }
 
+/*
+ * Ẩn hẳn thanh cuộn của track cuộn ngang (carousel) — điều hướng bằng mũi tên / dots / vuốt.
+ * Phải đặt ở đây, NGOÀI mọi `@layer`, và sau các rule `::-webkit-scrollbar` phía trên:
+ * rule không nằm trong layer luôn thắng rule trong layer, nên nếu để trong `@layer utilities`
+ * thì các rule scrollbar toàn cục ở trên vẫn vẽ thanh cuộn ra.
+ */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 /* ===== REDUCED MOTION ===== */
 @media (prefers-reduced-motion: reduce) {
   *,

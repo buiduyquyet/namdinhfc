@@ -1,4 +1,5 @@
 import { Player, Position } from '@/data/players'
+import { FEATURED_PLAYERS_LIMIT } from '@/lib/featured-players'
 import { isPlayerSourceFilter, type PlayerSourceFilter } from '@/lib/player-source'
 import { payloadFetch, resolveMediaUrl } from '@/lib/payload-rest'
 import type { PayloadListResponse } from '@/lib/payload-rest'
@@ -54,31 +55,56 @@ export async function getActivePlayerSource(): Promise<PlayerSourceFilter> {
   }
 }
 
+function mapPlayer(doc: PayloadPlayer): Player {
+  return {
+    id: doc.id.toString(),
+    name: doc.name,
+    slug: doc.name.toLowerCase().replace(/\s+/g, '-'),
+    number: doc.number,
+    position: mapPosition(doc.position),
+    nationality: doc.nationality || 'Việt Nam',
+    age: calculateAge(doc.dateOfBirth),
+    height: doc.height ?? undefined,
+    weight: doc.weight ?? undefined,
+    image: resolveImageUrl(doc),
+    isFeatured: doc.isFeatured ?? false,
+  }
+}
+
+/**
+ * Query cầu thủ, luôn kèm bộ lọc nguồn dữ liệu đang chọn trong "Cấu hình trang".
+ * `extraParams` là các cặp query của Payload REST cần nối thêm.
+ */
+async function fetchPlayers(limit: number, extraParams = ''): Promise<Player[]> {
+  const source = await getActivePlayerSource()
+  const sourceQuery = source === 'all' ? '' : `&where[dataSource][equals]=${source}`
+
+  const data = await payloadFetch<PayloadListResponse<PayloadPlayer>>(
+    `players?limit=${limit}&sort=number&depth=1${sourceQuery}${extraParams}`,
+  )
+
+  return data.docs.map(mapPlayer)
+}
+
 /** Fetches players from Payload CMS REST API, filtered by the configured data source */
 export async function getPayloadPlayers(): Promise<Player[]> {
   try {
-    const source = await getActivePlayerSource()
-    const sourceQuery = source === 'all' ? '' : `&where[dataSource][equals]=${source}`
-
-    const data = await payloadFetch<PayloadListResponse<PayloadPlayer>>(
-      `players?limit=100&sort=number&depth=1${sourceQuery}`,
-    )
-
-    return data.docs.map((doc) => ({
-      id: doc.id.toString(),
-      name: doc.name,
-      slug: doc.name.toLowerCase().replace(/\s+/g, '-'),
-      number: doc.number,
-      position: mapPosition(doc.position),
-      nationality: doc.nationality || 'Việt Nam',
-      age: calculateAge(doc.dateOfBirth),
-      height: doc.height ?? undefined,
-      weight: doc.weight ?? undefined,
-      image: resolveImageUrl(doc),
-      isFeatured: false,
-    }))
+    return await fetchPlayers(100)
   } catch (error) {
     console.error('Failed to fetch players from Payload CMS:', error)
+    return []
+  }
+}
+
+/**
+ * Cầu thủ được tick "Cầu thủ nổi bật" trong admin, tối đa `FEATURED_PLAYERS_LIMIT`.
+ * Chưa tick ai thì trả rỗng — phía UI tự ẩn section thay vì dựng danh sách thay thế.
+ */
+export async function getFeaturedPlayers(): Promise<Player[]> {
+  try {
+    return await fetchPlayers(FEATURED_PLAYERS_LIMIT, '&where[isFeatured][equals]=true')
+  } catch (error) {
+    console.error('Failed to fetch featured players from Payload CMS:', error)
     return []
   }
 }

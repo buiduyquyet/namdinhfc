@@ -144,6 +144,15 @@ npm run generate:types   # sinh lại payload-types.ts
 npm run generate:importmap
 ```
 
+### Dev server — quy ước cho AI agent
+
+- **Mặc định: không tự bật `npm run dev`.** Kiểm tra bằng `npm run typecheck` / `npm run lint` / `npm run build` là đủ cho phần lớn thay đổi; phần chạy thử trên trình duyệt để người dùng tự làm, đỡ tốn token.
+- Nếu **thật sự cần** bật (ví dụ phải gọi REST API của Payload để xác minh), thì:
+  - **bắt buộc tự tắt ngay sau khi kiểm tra xong** — `pkill -f "next dev"; pkill -f "next-server"`, rồi `lsof -ti tcp:3000 | xargs -r kill -9`;
+  - báo cho người dùng biết là đã bật và đã tắt.
+- Lý do: Next 16 chỉ cho phép **một** `next dev` trên cùng thư mục. Server bỏ quên sẽ chiếm cổng 3000 và làm `npm run dev` của người dùng chạy nhầm sang cổng khác.
+- Trước khi bật, luôn kiểm tra xem người dùng đã có server đang chạy chưa (`lsof -ti tcp:3000`). **Không kill server của người dùng** — nếu buộc phải restart (sửa `collections/` hoặc `globals/` thì Payload không nhận qua HMR), phải nói rõ trong câu trả lời.
+
 ⚠️ **Sửa `collections/` hoặc `globals/` → phải chạy `npm run generate:types` và commit `payload-types.ts` kèm theo.**
 Type của CMS **luôn import từ `@/payload-types`**, không tự khai báo interface tay:
 ```ts

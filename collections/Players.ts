@@ -1,5 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
+import { FEATURED_PLAYERS_LIMIT } from '@/lib/featured-players'
 import { PLAYER_DATA_SOURCE_OPTIONS } from '@/lib/player-source'
 
 export const Players: CollectionConfig = {
@@ -10,7 +11,7 @@ export const Players: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'number', 'position', 'dataSource'],
+    defaultColumns: ['name', 'number', 'position', 'isFeatured', 'dataSource'],
     components: {
       beforeList: ['@/components/admin/ImportPlayersButton'],
     }
@@ -62,6 +63,17 @@ export const Players: CollectionConfig = {
       label: 'URL ảnh (link ngoài)',
       admin: {
         description: 'Dùng khi ảnh nằm ở nơi khác. Bỏ trống nếu đã upload ảnh ở trên.',
+      },
+    },
+    {
+      name: 'isFeatured',
+      type: 'checkbox',
+      label: 'Cầu thủ nổi bật',
+      defaultValue: false,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description: `Hiện ở mục "Ngôi Sao Nổi Bật" ngoài trang chủ. Trang chủ lấy tối đa ${FEATURED_PLAYERS_LIMIT} cầu thủ, ưu tiên theo số áo tăng dần.`,
       },
     },
     {

@@ -108,6 +108,17 @@ style={{ animation: `fadeInUp 0.6s ease-out ${delay}ms both` }}
 ```
 
 Khác: `.gradient-text` (chữ gradient). Đã có `@media (prefers-reduced-motion: reduce)` tắt animation toàn cục — không cần xử lý lại.
+⚠️ Media query đó **chỉ tắt animation CSS**. Chuyển động do JS điều khiển (autoplay carousel…) phải tự kiểm tra `window.matchMedia("(prefers-reduced-motion: reduce)")`.
+
+### Carousel
+
+| Class | Mô tả |
+|---|---|
+| `.no-scrollbar` | Ẩn thanh cuộn của track cuộn ngang (Firefox + WebKit). Dùng kèm `overflow-x-auto snap-x snap-mandatory` |
+
+⚠️ `.no-scrollbar` nằm ở cuối `globals.css`, **ngoài mọi `@layer`** — không được chuyển vào `@layer utilities`.
+Các rule `::-webkit-scrollbar` toàn cục cũng không nằm trong layer, mà rule ngoài layer luôn thắng rule trong layer
+bất kể specificity, nên để trong layer thì thanh cuộn vẫn hiện ra.
 
 ---
 
@@ -132,6 +143,7 @@ Khác: `.gradient-text` (chữ gradient). Đã có `@media (prefers-reduced-moti
 | Component | Loại | Mô tả |
 |---|---|---|
 | `PlayerCard` | server | Card cầu thủ: gradient primary, watermark logo, số áo lớn nền, badge vị trí, avatar tròn, dòng quốc tịch · chiều cao · cân nặng |
+| `PlayerCarousel` | client | Carousel cầu thủ 1 hàng, cuộn ngang bằng scroll-snap (không dùng thư viện ngoài). Autoplay 4.5s, tạm dừng khi hover/focus/chạm, tự tắt khi bật giảm chuyển động. Mũi tên hiện từ `md`, số dot bám theo số trang cuộn thật (đo bằng `ResizeObserver`), ẩn cả hai khi mọi slide đã vừa khung |
 | `MatchCard` | server | Card trận đấu: `variant="default" \| "featured"`, prop `title` cho biến thể featured. Tự đổi tỉ số ↔ giờ theo `status`, hiện logo đội nếu có (không thì viết tắt tên), nút Mua vé / Xem highlight |
 | `LeagueTable` | server | Bảng xếp hạng V.League |
 | `StatsCounter` | client | Dãy số liệu đếm — nhận `items: { value, label, suffix? }[]` |

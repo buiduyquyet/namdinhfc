@@ -80,6 +80,8 @@ File mẫu gồm 7 cột: *Tên cầu thủ*, *Số áo*, *Vị trí* (bắt bu�
 
 Trong **Cấu hình trang → Nguồn dữ liệu cầu thủ**, chọn nguồn nào sẽ được hiển thị ra trang public (hoặc *Tất cả các nguồn*).
 
+Ô **Cầu thủ nổi bật** ở sidebar (và cột cùng tên trong danh sách) quyết định ai xuất hiện ở mục *Ngôi Sao Nổi Bật* ngoài trang chủ — lấy tối đa 5 người, sắp theo số áo tăng dần. Chưa tick ai thì trang chủ ẩn hẳn mục này.
+
 Endpoint import yêu cầu đăng nhập admin.
 
 **Tin tức** dùng cơ chế nháp/xuất bản gốc của Payload (`versions.drafts`):

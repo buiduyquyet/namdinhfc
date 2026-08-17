@@ -176,6 +176,10 @@ export interface Player {
    */
   imageUrl?: string | null;
   /**
+   * Hiện ở mục "Ngôi Sao Nổi Bật" ngoài trang chủ. Trang chủ lấy tối đa 5 cầu thủ, ưu tiên theo số áo tăng dần.
+   */
+  isFeatured?: boolean | null;
+  /**
    * Cho biết bản ghi này đến từ đâu. Trang public có thể lọc theo nguồn trong Cấu hình trang.
    */
   dataSource: 'excel' | 'manual';
@@ -393,6 +397,7 @@ export interface PlayersSelect<T extends boolean = true> {
   weight?: T;
   image?: T;
   imageUrl?: T;
+  isFeatured?: T;
   dataSource?: T;
   updatedAt?: T;
   createdAt?: T;
