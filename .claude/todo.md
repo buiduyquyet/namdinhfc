@@ -52,13 +52,15 @@ Kế hoạch phát triển. Quy ước: `[ ]` chưa làm · `[x]` xong · 🔴 �
 - [x] Sửa bug `MatchCard` (luôn hiện "Trận kế tiếp" + badge LIVE, chữ trắng trên nền trắng) + migrate sang Tailwind
 - [ ] Nhập lịch thi đấu mùa giải thật vào CMS — hiện collection đang trống nên trang hiện empty state
 
-### 2.3 Trang chi tiết cầu thủ `/squad/[slug]` 🔴
+### 2.3 Trang chi tiết cầu thủ `/squad/[slug]` ✅
 
-- [ ] Thêm field cho Players: `slug` (tự sinh từ tên, unique), `bio` (richText), `height`, `weight`, `preferredFoot`, `joinedDate`
-- [ ] Trang `/squad/[slug]`: ảnh lớn, thông tin cá nhân (ngày sinh, chiều cao, cân nặng), tiểu sử
-- [ ] Sửa `FeaturedPlayersSection` — hiện đang `<Link>` tới trang chưa tồn tại
-- [ ] `PlayerCard` link sang trang chi tiết ở cả trang `/squad`
-- [ ] `generateMetadata` cho SEO từng cầu thủ
+- [x] Thêm field cho Players: `slug` (tự sinh từ tên, unique), `bio` (richText), `height`, `weight`, `preferredFoot`, `joinedDate`
+- [x] `lib/player-foot.ts` — hằng số chân thuận dùng chung collection ↔ UI
+- [x] `PlayerDetail` + `getPlayerBySlug` + `getSquadmates` trong `lib/payload-api.ts`, bỏ slug bịa từ `name`
+- [x] Trang `/squad/[slug]`: ảnh lớn, thông tin cá nhân (ngày sinh, chiều cao, cân nặng), tiểu sử, mục "Cùng vị trí"
+- [x] `PlayerGrid` dùng chung — card ở `/squad` link sang trang chi tiết, `PlayerCarousel` hết 404
+- [x] `generateMetadata` + OpenGraph cho SEO từng cầu thủ
+- [ ] 🟡 **Mở & lưu lại 30 cầu thủ trong admin** để ghi `slug` thật xuống DB — hiện `slug` đang `null`, trang chạy nhờ fallback sinh slug từ tên trong `getPlayerBySlug`
 
 ---
 

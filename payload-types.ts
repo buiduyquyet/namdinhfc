@@ -170,11 +170,35 @@ export interface Player {
   dateOfBirth?: string | null;
   height?: number | null;
   weight?: number | null;
+  preferredFoot?: ('right' | 'left' | 'both') | null;
+  joinedDate?: string | null;
   image?: (string | null) | Media;
   /**
    * Dùng khi ảnh nằm ở nơi khác. Bỏ trống nếu đã upload ảnh ở trên.
    */
   imageUrl?: string | null;
+  /**
+   * Hiển thị ở trang chi tiết cầu thủ. Bỏ trống thì trang sẽ ẩn mục này.
+   */
+  bio?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Để trống sẽ tự sinh từ tên cầu thủ.
+   */
+  slug?: string | null;
   /**
    * Hiện ở mục "Ngôi Sao Nổi Bật" ngoài trang chủ. Trang chủ lấy tối đa 5 cầu thủ, ưu tiên theo số áo tăng dần.
    */
@@ -395,8 +419,12 @@ export interface PlayersSelect<T extends boolean = true> {
   dateOfBirth?: T;
   height?: T;
   weight?: T;
+  preferredFoot?: T;
+  joinedDate?: T;
   image?: T;
   imageUrl?: T;
+  bio?: T;
+  slug?: T;
   isFeatured?: T;
   dataSource?: T;
   updatedAt?: T;

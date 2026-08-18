@@ -1,9 +1,24 @@
 import { Player, Position } from '@/data/players'
 import { FEATURED_PLAYERS_LIMIT } from '@/lib/featured-players'
+import type { PreferredFoot } from '@/lib/player-foot'
 import { isPlayerSourceFilter, type PlayerSourceFilter } from '@/lib/player-source'
 import { payloadFetch, resolveMediaUrl } from '@/lib/payload-rest'
 import type { PayloadListResponse } from '@/lib/payload-rest'
+import { slugify } from '@/lib/slug'
 import type { Player as PayloadPlayer, SiteSetting } from '@/payload-types'
+
+/**
+ * Cầu thủ kèm các thông tin chỉ dùng ở trang chi tiết `/squad/[slug]`.
+ * Tách khỏi `Player` để danh sách và card không phải tải theo nội dung tiểu sử.
+ */
+export interface PlayerDetail extends Player {
+  preferredFoot?: PreferredFoot
+  /** Ngày gia nhập CLB, dạng ISO. */
+  joinedDate?: string
+  /** Ngày sinh dạng ISO — trang chi tiết hiện ngày, không chỉ số tuổi. */
+  dateOfBirth?: string
+  bio: PayloadPlayer['bio']
+}
 
 /** Maps Vietnamese position name to internal Position type */
 function mapPosition(viPosition: PayloadPlayer['position']): Position {
@@ -55,11 +70,19 @@ export async function getActivePlayerSource(): Promise<PlayerSourceFilter> {
   }
 }
 
+/**
+ * Slug của cầu thủ. Các bản ghi tạo trước khi có field `slug` chưa có giá trị,
+ * nên sinh tạm từ tên để link không chết — lưu lại trong admin là có slug thật.
+ */
+function resolveSlug(doc: PayloadPlayer): string {
+  return doc.slug?.trim() || slugify(doc.name)
+}
+
 function mapPlayer(doc: PayloadPlayer): Player {
   return {
     id: doc.id.toString(),
     name: doc.name,
-    slug: doc.name.toLowerCase().replace(/\s+/g, '-'),
+    slug: resolveSlug(doc),
     number: doc.number,
     position: mapPosition(doc.position),
     nationality: doc.nationality || 'Việt Nam',
@@ -107,4 +130,47 @@ export async function getFeaturedPlayers(): Promise<Player[]> {
     console.error('Failed to fetch featured players from Payload CMS:', error)
     return []
   }
+}
+
+function mapPlayerDetail(doc: PayloadPlayer): PlayerDetail {
+  return {
+    ...mapPlayer(doc),
+    preferredFoot: doc.preferredFoot ?? undefined,
+    joinedDate: doc.joinedDate ?? undefined,
+    dateOfBirth: doc.dateOfBirth ?? undefined,
+    bio: doc.bio ?? null,
+  }
+}
+
+/**
+ * Một cầu thủ theo slug. Trả `null` khi không tìm thấy để page gọi `notFound()`.
+ * Không lọc theo nguồn dữ liệu: người dùng vào bằng link trực tiếp vẫn xem được.
+ */
+export async function getPlayerBySlug(slug: string): Promise<PlayerDetail | null> {
+  try {
+    const bySlug = await payloadFetch<PayloadListResponse<PayloadPlayer>>(
+      `players?where[slug][equals]=${encodeURIComponent(slug)}&limit=1&depth=1`,
+    )
+    if (bySlug.docs[0]) return mapPlayerDetail(bySlug.docs[0])
+
+    // Bản ghi tạo trước khi có field `slug` chưa có giá trị trong DB —
+    // dò lại bằng slug sinh từ tên để link cũ không chết.
+    const legacy = await payloadFetch<PayloadListResponse<PayloadPlayer>>(
+      `players?where[slug][exists]=false&limit=200&depth=1`,
+    )
+    const matched = legacy.docs.find((doc) => slugify(doc.name) === slug)
+    return matched ? mapPlayerDetail(matched) : null
+  } catch (error) {
+    console.error(`Failed to fetch player "${slug}" from Payload CMS:`, error)
+    return null
+  }
+}
+
+/** Cầu thủ cùng vị trí, loại trừ người đang xem — hiện ở cuối trang chi tiết. */
+export async function getSquadmates(current: Player, limit = 4): Promise<Player[]> {
+  const players = await getPayloadPlayers()
+
+  return players
+    .filter((player) => player.position === current.position && player.id !== current.id)
+    .slice(0, limit)
 }

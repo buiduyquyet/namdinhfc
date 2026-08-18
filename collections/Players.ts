@@ -1,7 +1,18 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, FieldHook } from 'payload'
 
 import { FEATURED_PLAYERS_LIMIT } from '@/lib/featured-players'
+import { PREFERRED_FOOT_OPTIONS } from '@/lib/player-foot'
 import { PLAYER_DATA_SOURCE_OPTIONS } from '@/lib/player-source'
+import { slugify } from '@/lib/slug'
+
+/** Tự sinh slug từ tên cầu thủ khi quản trị viên để trống ô Slug. */
+const fillSlugFromName: FieldHook = ({ data, value }) => {
+  const manual = typeof value === 'string' ? value.trim() : ''
+  if (manual) return slugify(manual)
+
+  const name = typeof data?.name === 'string' ? data.name : ''
+  return slugify(name)
+}
 
 export const Players: CollectionConfig = {
   slug: 'players',
@@ -56,6 +67,27 @@ export const Players: CollectionConfig = {
         },
       ],
     },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'preferredFoot',
+          type: 'select',
+          label: 'Chân thuận',
+          options: PREFERRED_FOOT_OPTIONS,
+          admin: { width: '50%' },
+        },
+        {
+          name: 'joinedDate',
+          type: 'date',
+          label: 'Ngày gia nhập CLB',
+          admin: {
+            width: '50%',
+            date: { pickerAppearance: 'dayOnly', displayFormat: 'dd/MM/yyyy' },
+          },
+        },
+      ],
+    },
     { name: 'image', type: 'upload', relationTo: 'media', label: 'Ảnh đại diện (Upload)' },
     {
       name: 'imageUrl',
@@ -64,6 +96,26 @@ export const Players: CollectionConfig = {
       admin: {
         description: 'Dùng khi ảnh nằm ở nơi khác. Bỏ trống nếu đã upload ảnh ở trên.',
       },
+    },
+    {
+      name: 'bio',
+      type: 'richText',
+      label: 'Tiểu sử',
+      admin: {
+        description: 'Hiển thị ở trang chi tiết cầu thủ. Bỏ trống thì trang sẽ ẩn mục này.',
+      },
+    },
+    {
+      name: 'slug',
+      type: 'text',
+      label: 'Đường dẫn (Slug)',
+      unique: true,
+      index: true,
+      admin: {
+        position: 'sidebar',
+        description: 'Để trống sẽ tự sinh từ tên cầu thủ.',
+      },
+      hooks: { beforeValidate: [fillSlugFromName] },
     },
     {
       name: 'isFeatured',

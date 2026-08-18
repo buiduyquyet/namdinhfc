@@ -14,7 +14,6 @@ export interface Player {
     weight?: number;
     image?: string;
     isFeatured?: boolean;
-    bio?: string;
 }
 
 export const positionLabels: Record<Position, string> = {
@@ -35,7 +34,6 @@ export const players: Player[] = [
         nationality: "Việt Nam",
         age: 33,
         isFeatured: true,
-        bio: "Thủ môn số 1 của CLB và ĐTQG Việt Nam, nổi tiếng với những pha cứu thua xuất sắc.",
     },
     {
         id: "gk-02",
@@ -122,7 +120,6 @@ export const players: Player[] = [
         nationality: "Việt Nam",
         age: 31,
         isFeatured: true,
-        bio: "Tiền vệ tài hoa, được mệnh danh là 'phù thuỷ' của bóng đá Việt Nam với kỹ thuật điêu luyện.",
     },
     {
         id: "mf-02",
@@ -133,7 +130,6 @@ export const players: Player[] = [
         nationality: "Brazil",
         age: 27,
         isFeatured: true,
-        bio: "Tiền vệ sáng tạo người Brazil, trụ cột tuyến giữa với khả năng kiến tạo xuất sắc.",
     },
     {
         id: "mf-03",
@@ -200,7 +196,6 @@ export const players: Player[] = [
         nationality: "Brazil",
         age: 30,
         isFeatured: true,
-        bio: "Chân sút số 1 của đội, Vua phá lưới V.League với bản năng ghi bàn vượt trội.",
     },
     {
         id: "fw-02",
@@ -211,7 +206,6 @@ export const players: Player[] = [
         nationality: "Brazil",
         age: 27,
         isFeatured: true,
-        bio: "Tiền đạo tốc độ với khả năng đi bóng và dứt điểm sắc bén.",
     },
     {
         id: "fw-03",

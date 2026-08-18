@@ -1,6 +1,4 @@
-"use client";
-
-import PlayerCard from "@/components/PlayerCard";
+import PlayerGrid from "@/components/squad/PlayerGrid";
 import { Player, Position, positionLabels } from "@/data/players";
 
 interface PlayerSectionProps {
@@ -28,11 +26,7 @@ const PlayerSection = ({
       </div>
 
       {/* Players Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-        {players.map((player, index) => (
-          <PlayerCard key={player.id} player={player} index={index} />
-        ))}
-      </div>
+      <PlayerGrid players={players} />
     </section>
   );
 };
