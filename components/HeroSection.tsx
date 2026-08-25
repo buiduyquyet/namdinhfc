@@ -21,7 +21,7 @@ const HeroSection = () => {
     >
       {/* Background image slider */}
       <div
-        className="container"
+        className="container px-0 sm:px-8 lg:px-16"
         style={{
           position: "absolute",
           inset: 0,

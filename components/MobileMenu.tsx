@@ -9,18 +9,21 @@ interface MobileMenuProps {
   items: NavItem[];
   isActive: string;
   pathname: string;
-  isScrolled: boolean;
   onNavClick: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
 }
 
-const MobileMenu = ({ items, isActive, pathname, isScrolled, onNavClick }: MobileMenuProps) => (
+// Chiều cao header: logo 65px + padding dọc 5px x 2
+const HEADER_HEIGHT = 75;
+
+const MobileMenu = ({ items, isActive, pathname, onNavClick }: MobileMenuProps) => (
   <div
     style={{
       position: "fixed",
       inset: 0,
-      top: isScrolled ? "63px" : "75px",
+      top: `${HEADER_HEIGHT}px`,
       backgroundColor: "var(--color-secondary)",
       zIndex: 999,
+      overflowY: "auto",
       animation: "fadeIn 0.2s ease-out",
     }}
   >
