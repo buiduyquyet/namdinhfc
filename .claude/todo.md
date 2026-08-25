@@ -78,8 +78,11 @@ Kế hoạch phát triển. Quy ước: `[ ]` chưa làm · `[x]` xong · 🔴 �
 ## Đợt 4 — Vận hành & hạ tầng
 
 - [x] 🔴 **Cloud storage cho Media** — đã dùng `@payloadcms/storage-vercel-blob`. Không có `BLOB_READ_WRITE_TOKEN` thì plugin tự tắt, file về lại `public/media` (tiện dev ở máy).
-  - [ ] 🔴 Tạo Blob store trên Vercel, thêm `BLOB_READ_WRITE_TOKEN` vào **.env local** và **env của project trên Vercel**
-  - [ ] 🔴 Chạy `npm run migrate:media` để đẩy 31 file trong `public/media` lên Blob (giữ nguyên tên nên không phải sửa DB)
+  - [x] Tạo Blob store trên Vercel + `BLOB_READ_WRITE_TOKEN` trong `.env` local
+  - [x] Chạy `npm run migrate:media` — 31/31 file đã lên store, URL public tải ẩn danh trả 200
+  - [ ] 🔴 Thêm `BLOB_READ_WRITE_TOKEN` vào **Environment Variables của project trên Vercel** (Production + Preview, đánh dấu Sensitive) — **làm trước khi deploy**
+  - [ ] 🔴 Push commit `4af12bb` để deploy; thiếu token trên Vercel thì plugin tự tắt và ảnh vẫn hỏng
+  - [ ] 🟢 Xoá `BLOB_STORE_ID` sót trong `.env` local (trỏ nhầm store cũ, plugin không dùng)
   - [ ] 🟡 Sau khi verify ảnh hiện đúng trên bản deploy thì gỡ 31 file trong `public/media` khỏi git
 - [ ] 🔴 `app/sitemap.ts` + `app/robots.ts` (gồm cả URL động của news và squad)
 - [ ] 🟡 `loading.tsx` / `error.tsx` / `not-found.tsx` cho các route group
