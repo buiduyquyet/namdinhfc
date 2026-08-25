@@ -131,7 +131,7 @@ Section nền tối/gradient → dùng `<SectionDark>` (bọc sẵn `SectionBack
 
 - Commit message theo mẫu đang dùng: `[Fix]: ...`, `[Update]: ...`, `[Refactor]: ...` (hoặc `fix: ...`). Nội dung tiếng Anh.
 - Branch chính: `master`.
-- **Không commit `.env`** (đã ignore). Biến môi trường đang dùng: `MONGODB_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`.
+- **Không commit `.env`** (đã ignore). Biến môi trường đang dùng: `MONGODB_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, `BLOB_READ_WRITE_TOKEN`.
 
 ## 5. Lệnh
 

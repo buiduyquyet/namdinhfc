@@ -10,12 +10,14 @@
     "typecheck": "tsc --noEmit",
     "payload": "cross-env NODE_OPTIONS=\"--import tsx --no-deprecation\" payload --disable-transpile",
     "generate:types": "npm run payload -- generate:types",
-    "generate:importmap": "npm run payload -- generate:importmap"
+    "generate:importmap": "npm run payload -- generate:importmap",
+    "migrate:media": "node --import tsx --env-file=.env scripts/migrate-media-to-blob.ts"
   },
   "dependencies": {
     "@payloadcms/db-mongodb": "^3.80.0",
     "@payloadcms/next": "^3.80.0",
     "@payloadcms/richtext-lexical": "^3.80.0",
+    "@payloadcms/storage-vercel-blob": "^3.80.0",
     "cross-env": "^10.1.0",
     "exceljs": "^4.4.0",
     "graphql": "^16.13.1",

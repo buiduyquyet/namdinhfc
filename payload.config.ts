@@ -1,6 +1,7 @@
 import { buildConfig } from 'payload'
 import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
 
 import { Users } from './collections/Users'
@@ -29,4 +30,17 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
+  plugins: [
+    /**
+     * Filesystem của Vercel chỉ đọc nên `public/media` không dùng được khi deploy —
+     * ảnh upload phải nằm ở Vercel Blob.
+     *
+     * Không có `BLOB_READ_WRITE_TOKEN` (máy local) thì plugin tự tắt và Payload
+     * quay về lưu vào `public/media` như cũ, nên dev ở máy không cần token.
+     */
+    vercelBlobStorage({
+      collections: { media: true },
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+    }),
+  ],
 })

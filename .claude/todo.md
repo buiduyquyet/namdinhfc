@@ -77,7 +77,10 @@ Kế hoạch phát triển. Quy ước: `[ ]` chưa làm · `[x]` xong · 🔴 �
 
 ## Đợt 4 — Vận hành & hạ tầng
 
-- [ ] 🔴 **Cloud storage cho Media** — `public/media` không tồn tại trên Vercel serverless, **ảnh upload sẽ mất sau mỗi lần deploy**. Chuyển sang `@payloadcms/storage-s3` hoặc Vercel Blob. *(đang gác lại chờ quyết định)*
+- [x] 🔴 **Cloud storage cho Media** — đã dùng `@payloadcms/storage-vercel-blob`. Không có `BLOB_READ_WRITE_TOKEN` thì plugin tự tắt, file về lại `public/media` (tiện dev ở máy).
+  - [ ] 🔴 Tạo Blob store trên Vercel, thêm `BLOB_READ_WRITE_TOKEN` vào **.env local** và **env của project trên Vercel**
+  - [ ] 🔴 Chạy `npm run migrate:media` để đẩy 31 file trong `public/media` lên Blob (giữ nguyên tên nên không phải sửa DB)
+  - [ ] 🟡 Sau khi verify ảnh hiện đúng trên bản deploy thì gỡ 31 file trong `public/media` khỏi git
 - [ ] 🔴 `app/sitemap.ts` + `app/robots.ts` (gồm cả URL động của news và squad)
 - [ ] 🟡 `loading.tsx` / `error.tsx` / `not-found.tsx` cho các route group
 - [ ] 🟡 GitHub Action chạy `typecheck` + `lint` + `build` trên mỗi PR

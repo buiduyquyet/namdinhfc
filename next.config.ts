@@ -4,9 +4,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    // Ảnh cầu thủ / tin tức đều upload qua Payload (/media) nên chưa cần domain ngoài.
     // Thêm host vào đây nếu dùng field "URL ảnh (link ngoài)".
-    remotePatterns: [],
+    remotePatterns: [
+      // Ảnh upload qua Payload khi deploy — lưu ở Vercel Blob
+      { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
+    ],
   },
 };
 

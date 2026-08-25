@@ -24,7 +24,14 @@ Tạo file `.env` ở thư mục gốc:
 MONGODB_URI=mongodb://127.0.0.1/namdinh-fc
 PAYLOAD_SECRET=<chuỗi bí mật bất kỳ, đủ dài>
 NEXT_PUBLIC_SERVER_URL=http://localhost:3000/   # nhớ dấu "/" ở cuối
+
+# Tuỳ chọn ở máy, BẮT BUỘC khi deploy — token của Vercel Blob store
+BLOB_READ_WRITE_TOKEN=vercel_blob_rw_xxx
 ```
+
+> **Ảnh upload:** khi có `BLOB_READ_WRITE_TOKEN`, Payload đẩy file lên Vercel Blob.
+> Bỏ trống thì plugin tự tắt và file lưu vào `public/media` như cũ — tiện khi dev ở máy.
+> Filesystem của Vercel chỉ đọc nên **bản deploy bắt buộc phải có token**, nếu không ảnh sẽ hỏng.
 
 > ⚠️ **`NEXT_PUBLIC_SERVER_URL` quyết định trang lấy dữ liệu từ đâu.** Toàn bộ page fetch nội dung qua REST API tại địa chỉ này. Nếu để trỏ về site đã deploy (ví dụ `https://namdinhfc.vercel.app/`) thì khi chạy `npm run dev` / `npm run build` ở máy, trang vẫn đọc dữ liệu và **schema của bản deploy**, không phải code đang sửa — collection mới thêm sẽ trả 403 hoặc thiếu field cho tới khi deploy. Khi phát triển ở máy, hãy đặt `http://localhost:3000/`.
 
