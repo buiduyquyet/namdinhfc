@@ -15,7 +15,7 @@ const PlayerCard = ({ player, index = 0 }: PlayerCardProps) => {
 
     return (
         <div
-            className="h-100 group relative overflow-hidden cursor-pointer animate-fade-in-up bg-linear-to-br from-primary to-primary-dark rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+            className="group relative overflow-hidden cursor-pointer animate-fade-in-up bg-linear-to-br from-primary to-primary-dark rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
             style={{
                 animationDelay: `${index * 80}ms`,
             }}
@@ -72,15 +72,15 @@ const PlayerCard = ({ player, index = 0 }: PlayerCardProps) => {
             </div>
 
             {/* Info Area */}
-            <div className="px-6 pb-6 relative z-10">
+            <div className="px-6 pb-6 flex flex-col justify-content items-center relative z-10">
                 {/* Name & Small Number - Restored to Old Position (Inline) */}
-                <div className="flex items-center justify-between mb-2">
+                <div className="mb-2">
                     <h3 className="font-heading font-extrabold text-xl text-white leading-tight truncate pr-2 drop-shadow-sm">
                         {player.name}
                     </h3>
                 </div>
 
-                <div className="flex items-center flex-wrap gap-x-2 gap-y-1 text-sm text-white/80 font-medium mb-4">
+                <div className="flex justify-between flex-wrap gap-x-2 gap-y-1 text-sm text-white/80 font-medium mb-4">
                     <span>{player.nationality}</span>
                     {details.map((detail) => (
                         <span key={detail} className="flex items-center gap-2 before:content-[''] before:block before:w-1 before:h-1 before:rounded-full before:bg-white/40">

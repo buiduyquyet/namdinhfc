@@ -3,6 +3,7 @@ import { mongooseAdapter } from '@payloadcms/db-mongodb'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import path from 'path'
+import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Players } from './collections/Players'
@@ -23,6 +24,9 @@ export default buildConfig({
   collections: [Users, Players, News, Matches, Media],
   globals: [SiteSettings],
   editor: lexicalEditor({}),
+  // Bắt buộc để chức năng cắt ảnh / focal point trong admin hoạt động —
+  // thiếu `sharp`, Payload nhận yêu cầu crop rồi bỏ qua mà không báo lỗi.
+  sharp,
   secret: process.env.PAYLOAD_SECRET || 'a-very-secret-string-for-payload-3.0-namdinhfc',
   db: mongooseAdapter({
     url: process.env.MONGODB_URI || 'mongodb://127.0.0.1/namdinh-fc',
