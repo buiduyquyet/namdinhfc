@@ -11,10 +11,9 @@ const AboutSection = () => {
 
   return (
     <section
-      id="gioi-thieu"
+      id="about"
       style={{
         padding: "5rem 0",
-        marginTop: "80px",
         background:
           "linear-gradient(135deg, var(--color-primary-dark), var(--color-primary), var(--color-primary-light))",
         position: "relative",
@@ -41,6 +40,7 @@ const AboutSection = () => {
           <div className="relative w-full lg:w-[570px] h-[300px] lg:h-[400px] shrink-0">
             <ImageSlider
               images={aboutImages}
+              sizes="(min-width: 1024px) 570px, 100vw"
               className="w-full h-full rounded-md shadow-lg"
             />
           </div>

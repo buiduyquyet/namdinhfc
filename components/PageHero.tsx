@@ -24,6 +24,7 @@ const PageHero = ({ title, subtitle, breadcrumbs }: PageHeroProps) => {
           src="/main-logo.jpg"
           alt="Nam Dinh FC Watermark"
           fill
+          sizes="(min-width: 768px) 380px, 240px"
           className="object-contain mix-blend-screen rounded-full"
         />
       </div>

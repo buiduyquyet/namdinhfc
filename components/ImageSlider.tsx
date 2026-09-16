@@ -10,6 +10,9 @@ interface ImageSliderProps {
   imageClassName?: string;
   style?: React.CSSProperties;
   priority?: boolean;
+  controlsClassName?: string;
+  /** Chiều rộng hiển thị của ảnh, truyền cho `sizes` của next/image */
+  sizes?: string;
 }
 
 const ImageSlider = ({
@@ -19,6 +22,8 @@ const ImageSlider = ({
   imageClassName = "",
   style,
   priority = false,
+  controlsClassName = "",
+  sizes = "100vw",
 }: ImageSliderProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -45,23 +50,34 @@ const ImageSlider = ({
             src={src}
             alt={`Slide ${index + 1}`}
             fill
+            sizes={sizes}
             className={`object-cover ${imageClassName}`}
             priority={priority && index === 0}
           />
         </div>
       ))}
-      
+
       {images.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+        <div
+          className={`absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 ${controlsClassName}`}
+        >
           {images.map((_, index) => (
-             <button
-                key={index}
-                onClick={() => setCurrentIndex(index)}
-                className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                  index === currentIndex ? "bg-white" : "bg-white/50"
+            <button
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              className="flex h-8 w-8 items-center justify-center"
+              aria-label={`Go to slide ${index + 1}`}
+              aria-pressed={index === currentIndex}
+              type="button"
+            >
+              <span
+                className={`block rounded-full transition-all duration-300 ${
+                  index === currentIndex
+                    ? "h-2.5 w-2.5 bg-white"
+                    : "h-2 w-2 bg-white/55"
                 }`}
-                aria-label={`Go to slide ${index + 1}`}
-             />
+              />
+            </button>
           ))}
         </div>
       )}
