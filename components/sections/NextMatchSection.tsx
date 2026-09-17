@@ -45,7 +45,7 @@ export default async function NextMatchSection() {
           <PanelCard
             title="Bảng xếp hạng"
             caption={standingsCaption}
-            action={{ label: "Xem tất cả", href: "/fixtures#bang-xep-hang" }}
+            action={{ label: "Xem tất cả", href: "/fixtures?tab=standings" }}
           >
             {standings && standings.entries.length > 0 ? (
               <LeagueTable teams={standings.entries} limit={STANDINGS_PREVIEW_ROWS} />
