@@ -144,8 +144,9 @@ bất kể specificity, nên để trong layer thì thanh cuộn vẫn hiện ra
 |---|---|---|
 | `PlayerCard` | server | Card cầu thủ: gradient primary, watermark logo, số áo lớn nền, badge vị trí, avatar tròn, dòng quốc tịch · chiều cao · cân nặng |
 | `PlayerCarousel` | client | Carousel cầu thủ 1 hàng, cuộn ngang bằng scroll-snap (không dùng thư viện ngoài). Autoplay 4.5s, tạm dừng khi hover/focus/chạm, tự tắt khi bật giảm chuyển động. Mũi tên hiện từ `md`, số dot bám theo số trang cuộn thật (đo bằng `ResizeObserver`), ẩn cả hai khi mọi slide đã vừa khung |
-| `MatchCard` | server | Card trận đấu: `variant="default" \| "featured"`, prop `title` cho biến thể featured. Tự đổi tỉ số ↔ giờ theo `status`, hiện logo đội nếu có (không thì viết tắt tên), nút Mua vé / Xem highlight |
-| `LeagueTable` | server | Bảng xếp hạng V.League |
+| `PanelCard` | server | Khung `.card` có dải tiêu đề navy + thân trắng: `title` / `caption?` / `action?: { label, href }`. Dùng khi đặt nhiều khối thông tin cạnh nhau để chúng chung một kiểu (Trận kế tiếp, Bảng xếp hạng) |
+| `MatchCard` | server | Card trận đấu: `variant="default"` là `.card` độc lập; `"featured"` chỉ là phần nội dung cỡ lớn, **phải đặt trong `PanelCard`**. Tự đổi tỉ số ↔ giờ theo `status`, hiện logo đội nếu có (Nam Định fallback `main-logo.png`, đội khác viết tắt tên), nút Mua vé / Xem highlight |
+| `LeagueTable` | server | Bảng xếp hạng (chỉ phần `<table>`, đặt trong `PanelCard`). `limit` để rút gọn — bản rút gọn luôn giữ dòng Nam Định, chèn dòng "⋯" nếu bị tách khỏi top. Dữ liệu từ `lib/standings-api.ts` |
 | `StatsCounter` | client | Dãy số liệu đếm — nhận `items: { value, label, suffix? }[]` |
 | `ImageSlider` | client | Slider fade tự động: `images` / `interval=5000` / `priority` + dot indicator |
 | `news/NewsCard` | server | Card bài viết: ảnh 16:9 (`aspect-video`), badge chuyên mục, ngày, tiêu đề `line-clamp-2`, tóm tắt `line-clamp-3` |
@@ -215,7 +216,7 @@ grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6
 ## 7. Nợ kỹ thuật đã biết (không nhân bản)
 
 1. **`<style jsx global>`** trong `Header.tsx`, `Footer.tsx`, `StatsCounter.tsx` — nên chuyển sang Tailwind responsive utility.
-2. **Inline style dày đặc**: `LeagueTable` (~30 chỗ), `Footer` (~26) — nên migrate dần sang Tailwind class. `MatchCard` đã migrate xong, dùng làm mẫu.
+2. **Inline style dày đặc**: `Footer` (~26), `SectionTitle` — nên migrate dần sang Tailwind class. `MatchCard`, `LeagueTable` đã migrate xong, dùng làm mẫu.
 3. **Hai `SectionTitle`** (root + `about/`) trùng chức năng — cần hợp nhất thành một component có prop `highlight`.
 4. **Typo prop `chidlren`** trong `SectionDark.tsx` — nên đổi thành `children` (React children thật) khi có dịp refactor.
 5. `HeroSection` không có nội dung text — chỉ là slider + lớp trang trí.

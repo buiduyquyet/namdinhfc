@@ -71,6 +71,7 @@ export interface Config {
     players: Player;
     news: News;
     matches: Match;
+    standings: Standing;
     media: Media;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -83,6 +84,7 @@ export interface Config {
     players: PlayersSelect<false> | PlayersSelect<true>;
     news: NewsSelect<false> | NewsSelect<true>;
     matches: MatchesSelect<false> | MatchesSelect<true>;
+    standings: StandingsSelect<false> | StandingsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -298,6 +300,46 @@ export interface Match {
   createdAt: string;
 }
 /**
+ * Mỗi mùa giải của một giải đấu là một bản ghi. Trang chủ hiển thị bảng V.League 1 của mùa mới nhất.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "standings".
+ */
+export interface Standing {
+  id: string;
+  title?: string | null;
+  competition: 'V.League 1' | 'Cúp Quốc Gia' | 'AFC Champions League Two';
+  season: string;
+  matchday?: number | null;
+  /**
+   * Trang web sắp xếp theo cột "Hạng". Hiệu số được tự tính từ bàn thắng và bàn thua.
+   */
+  rows?:
+    | {
+        position: number;
+        team: string;
+        /**
+         * Hiển thị trong bảng. Để trống sẽ dùng tên đội.
+         */
+        shortName?: string | null;
+        played: number;
+        won: number;
+        drawn: number;
+        lost: number;
+        goalsFor: number;
+        goalsAgainst: number;
+        points: number;
+        /**
+         * Tối đa 5 trận, cũ → mới. T = thắng, H = hòa, B = thua. Ví dụ: THBTT
+         */
+        form?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -336,6 +378,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'matches';
         value: string | Match;
+      } | null)
+    | ({
+        relationTo: 'standings';
+        value: string | Standing;
       } | null)
     | ({
         relationTo: 'media';
@@ -464,6 +510,34 @@ export interface MatchesSelect<T extends boolean = true> {
   matchday?: T;
   ticketUrl?: T;
   highlightUrl?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "standings_select".
+ */
+export interface StandingsSelect<T extends boolean = true> {
+  title?: T;
+  competition?: T;
+  season?: T;
+  matchday?: T;
+  rows?:
+    | T
+    | {
+        position?: T;
+        team?: T;
+        shortName?: T;
+        played?: T;
+        won?: T;
+        drawn?: T;
+        lost?: T;
+        goalsFor?: T;
+        goalsAgainst?: T;
+        points?: T;
+        form?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }

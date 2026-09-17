@@ -5,9 +5,11 @@ import { formatWeekdayDate } from "@/lib/format-date";
 
 interface MatchCardProps {
   match: Match;
+  /**
+   * `default`: thẻ `.card` độc lập (danh sách trận).
+   * `featured`: chỉ phần nội dung, cỡ lớn hơn — đặt trong `PanelCard` ở trang chủ.
+   */
   variant?: "default" | "featured";
-  /** Tiêu đề nhỏ phía trên, chỉ dùng cho biến thể `featured`. */
-  title?: string;
 }
 
 interface TeamLogoProps {
@@ -15,6 +17,9 @@ interface TeamLogoProps {
   logo?: string;
   size?: number;
 }
+
+/** Logo CLB có sẵn trong `public/`, dùng khi trận chưa upload logo riêng cho Nam Định. */
+const CLUB_LOGO = "/main-logo.png";
 
 /** Viết tắt tên đội khi chưa upload logo: "Hà Nội FC" -> "HN". */
 function getInitials(name: string): string {
@@ -30,14 +35,15 @@ function getInitials(name: string): string {
 
 const TeamLogo = ({ name, logo, size = 44 }: TeamLogoProps) => {
   const isNamDinh = name === TEAM_NAME;
+  const src = logo || (isNamDinh ? CLUB_LOGO : undefined);
 
-  if (logo) {
+  if (src) {
     return (
       <div
-        className="relative rounded-full overflow-hidden bg-white/10 shrink-0"
+        className="relative rounded-full overflow-hidden bg-white shrink-0"
         style={{ width: size, height: size }}
       >
-        <Image src={logo} alt={name} fill sizes={`${size}px`} className="object-contain" />
+        <Image src={src} alt={name} fill sizes={`${size}px`} className="object-contain" />
       </div>
     );
   }
@@ -63,44 +69,31 @@ const STATUS_BADGE: Record<Match["status"], { label: string; className: string }
   postponed: { label: "Bị hoãn", className: "bg-amber-50 text-amber-700" },
 };
 
-const MatchCard = ({ match, variant = "default", title }: MatchCardProps) => {
+const MatchCard = ({ match, variant = "default" }: MatchCardProps) => {
   const isFeatured = variant === "featured";
   const hasScore = match.status === "finished" || match.status === "live";
-  const logoSize = isFeatured ? 56 : 44;
+  const logoSize = isFeatured ? 72 : 44;
   const statusBadge = STATUS_BADGE[match.status];
-
-  const textMain = isFeatured ? "text-white" : "text-secondary";
-  const textMuted = isFeatured ? "text-white/40" : "text-gray-400";
 
   return (
     <div
-      className={`h-full px-5 py-4 rounded-xl flex flex-col ${
-        isFeatured
-          ? "bg-linear-to-br from-secondary-dark via-secondary to-secondary-light border border-primary/15"
-          : "card"
+      className={`h-full flex flex-col ${
+        isFeatured ? "flex-1 px-5 py-6 md:px-8" : "card px-5 py-4 rounded-xl"
       }`}
     >
-      {isFeatured && title && (
-        <h3 className="font-heading font-bold text-xl text-white mb-5">{title}</h3>
-      )}
-
       {/* Giải đấu & trạng thái */}
-      <div className="flex items-center justify-between gap-2 mb-8">
-        <span
-          className={`badge ${isFeatured ? "bg-primary/15 text-primary" : "badge-primary"}`}
-        >
-          {match.competition}
-        </span>
+      <div className={`flex items-center justify-between gap-2 ${isFeatured ? "mb-6" : "mb-8"}`}>
+        <span className="badge badge-primary">{match.competition}</span>
         {statusBadge && <span className={`badge ${statusBadge.className}`}>{statusBadge.label}</span>}
       </div>
 
       {/* Hai đội & tỉ số */}
-      <div className="flex items-center justify-between gap-4">
+      <div className={`flex items-center justify-between gap-4 ${isFeatured ? "my-auto" : ""}`}>
         <div className="flex flex-col items-center gap-3 flex-1 min-w-0">
           <TeamLogo name={match.homeTeam} logo={match.homeLogo} size={logoSize} />
           <span
-            className={`font-heading font-bold text-center leading-tight ${textMain} ${
-              isFeatured ? "text-sm" : "text-[0.8125rem]"
+            className={`font-heading font-bold text-center leading-tight text-secondary ${
+              isFeatured ? "text-base" : "text-[0.8125rem]"
             }`}
           >
             {match.homeTeam}
@@ -110,7 +103,7 @@ const MatchCard = ({ match, variant = "default", title }: MatchCardProps) => {
         <div className="flex flex-col items-center gap-1 shrink-0">
           {hasScore ? (
             <div
-              className={`font-heading font-black leading-none tracking-wider ${textMain} ${
+              className={`font-heading font-black leading-none tracking-wider text-secondary ${
                 isFeatured ? "text-4xl" : "text-3xl"
               }`}
             >
@@ -119,13 +112,15 @@ const MatchCard = ({ match, variant = "default", title }: MatchCardProps) => {
           ) : (
             <div
               className={`font-heading font-extrabold leading-none ${
-                isFeatured ? "text-3xl text-primary" : "text-xl text-secondary"
+                isFeatured ? "text-4xl text-primary" : "text-xl text-secondary"
               }`}
             >
               {match.time}
             </div>
           )}
-          <span className={`text-xs font-medium ${textMuted}`}>
+          <span
+            className={`font-semibold text-gray-500 ${isFeatured ? "text-sm" : "text-xs"}`}
+          >
             {match.status === "finished" ? "FT" : formatWeekdayDate(match.date)}
           </span>
         </div>
@@ -133,8 +128,8 @@ const MatchCard = ({ match, variant = "default", title }: MatchCardProps) => {
         <div className="flex flex-col items-center gap-3 flex-1 min-w-0">
           <TeamLogo name={match.awayTeam} logo={match.awayLogo} size={logoSize} />
           <span
-            className={`font-heading font-bold text-center leading-tight ${textMain} ${
-              isFeatured ? "text-sm" : "text-[0.8125rem]"
+            className={`font-heading font-bold text-center leading-tight text-secondary ${
+              isFeatured ? "text-base" : "text-[0.8125rem]"
             }`}
           >
             {match.awayTeam}
@@ -144,7 +139,9 @@ const MatchCard = ({ match, variant = "default", title }: MatchCardProps) => {
 
       {/* Sân & vòng đấu */}
       <div
-        className={`mt-8 flex items-center justify-center gap-1.5 text-[0.8125rem] ${textMuted}`}
+        className={`flex items-center justify-center gap-1.5 text-[0.8125rem] text-gray-500 ${
+          isFeatured ? "mt-6 pt-5 border-t border-gray-100" : "mt-8"
+        }`}
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
@@ -177,7 +174,7 @@ const MatchCard = ({ match, variant = "default", title }: MatchCardProps) => {
               href={match.highlightUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className={`btn text-xs px-5 py-2 ${isFeatured ? "btn-outline" : "btn-outline-dark"}`}
+              className="btn btn-outline-dark text-xs px-5 py-2"
             >
               Xem Highlight
             </a>

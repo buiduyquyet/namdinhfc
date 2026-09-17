@@ -10,6 +10,7 @@ import { Players } from './collections/Players'
 import { News } from './collections/News'
 import { Matches } from './collections/Matches'
 import { Media } from './collections/Media'
+import { Standings } from './collections/Standings'
 import { SiteSettings } from './globals/SiteSettings'
 
 import { fileURLToPath } from 'url'
@@ -21,7 +22,7 @@ export default buildConfig({
   admin: {
     user: Users.slug,
   },
-  collections: [Users, Players, News, Matches, Media],
+  collections: [Users, Players, News, Matches, Standings, Media],
   globals: [SiteSettings],
   editor: lexicalEditor({}),
   // Bắt buộc để chức năng cắt ảnh / focal point trong admin hoạt động —

@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 
+import LeagueTable from "@/components/LeagueTable";
 import PageHero from "@/components/PageHero";
+import PanelCard from "@/components/PanelCard";
+import SectionTitle from "@/components/SectionTitle";
 import FixtureFilters, { type FixtureTab } from "@/components/fixtures/FixtureFilters";
 import MatchMonthGroup from "@/components/fixtures/MatchMonthGroup";
 import { isCompetition } from "@/lib/competition";
 import { getMatches, groupMatchesByMonth } from "@/lib/matches-api";
+import { getLeagueStandings } from "@/lib/standings-api";
 
 export const metadata: Metadata = {
   title: "Lịch Thi Đấu",
@@ -22,10 +26,10 @@ export default async function FixturesPage({ searchParams }: FixturesPageProps) 
   const tab: FixtureTab = rawTab === "results" ? "results" : "upcoming";
   const competition = isCompetition(rawCompetition) ? rawCompetition : undefined;
 
-  const matches = await getMatches({
-    group: tab === "results" ? "finished" : "upcoming",
-    competition,
-  });
+  const [matches, standings] = await Promise.all([
+    getMatches({ group: tab === "results" ? "finished" : "upcoming", competition }),
+    getLeagueStandings(),
+  ]);
 
   const groups = groupMatchesByMonth(matches);
 
@@ -59,6 +63,23 @@ export default async function FixturesPage({ searchParams }: FixturesPageProps) 
           )}
         </div>
       </section>
+
+      {standings && standings.entries.length > 0 && (
+        <section id="bang-xep-hang" className="section-alt scroll-mt-20">
+          <div className="container max-w-4xl">
+            <SectionTitle
+              title="Bảng Xếp Hạng"
+              subtitle={`${standings.competition} mùa ${standings.season}`}
+            />
+            <PanelCard
+              title={standings.competition}
+              caption={standings.matchday ? `Cập nhật sau vòng ${standings.matchday}` : undefined}
+            >
+              <LeagueTable teams={standings.entries} />
+            </PanelCard>
+          </div>
+        </section>
+      )}
     </main>
   );
 }

@@ -1,314 +1,123 @@
-"use client";
+import { Fragment } from "react";
 
-import { LeagueTableEntry, TEAM_NAME } from "@/data/league-table";
+import { type LeagueTableEntry, type MatchResult, TEAM_NAME } from "@/data/league-table";
+import { LETTER_BY_RESULT, RESULT_LABEL } from "@/lib/league-form";
 
 interface LeagueTableProps {
-  teams?: LeagueTableEntry[];
-  showFullTable?: boolean;
+  teams: LeagueTableEntry[];
+  /** Số dòng hiển thị ở bản rút gọn. Bỏ trống để hiện toàn bộ bảng. */
+  limit?: number;
   highlightedTeam?: string;
 }
 
-const formColors = {
-  W: "#22c55e", // Green
-  D: "#eab308", // Yellow
-  L: "#ef4444", // Red
+const FORM_COLOR: Record<MatchResult, string> = {
+  W: "bg-(--color-success)",
+  D: "bg-(--color-accent)",
+  L: "bg-(--color-danger)",
 };
 
-const LeagueTable = ({
-  teams,
-  showFullTable = false,
-  highlightedTeam = TEAM_NAME,
-}: LeagueTableProps) => {
-  const displayTeams = showFullTable ? teams : teams?.slice(0, 4);
+/**
+ * Bản rút gọn luôn chứa đội được highlight: nếu đội nằm ngoài top `limit`,
+ * lấy top `limit - 1` rồi nối thêm dòng của đội đó.
+ */
+function pickRows(teams: LeagueTableEntry[], limit: number | undefined, highlightedTeam: string) {
+  if (!limit || teams.length <= limit) return teams;
+
+  const top = teams.slice(0, limit);
+  if (top.some((team) => team.team === highlightedTeam)) return top;
+
+  const highlighted = teams.find((team) => team.team === highlightedTeam);
+  return highlighted ? [...teams.slice(0, limit - 1), highlighted] : top;
+}
+
+// Chỉ chứa thuộc tính không bị ghi đè ở từng ô, tránh 2 class Tailwind cùng thuộc tính
+const HEAD_CELL = "py-3 text-xs";
+const HEAD_MUTED = `${HEAD_CELL} px-2 text-center font-semibold text-gray-500`;
+const BODY_CELL = "py-3 text-sm";
+const BODY_STAT = `${BODY_CELL} px-2 text-center text-gray-600`;
+
+const LeagueTable = ({ teams, limit, highlightedTeam = TEAM_NAME }: LeagueTableProps) => {
+  const rows = pickRows(teams, limit, highlightedTeam);
 
   return (
-    <div 
-      style={{
-        background: "var(--color-white)",
-        borderRadius: "var(--radius-md)",
-        boxShadow: "var(--shadow-lg)",
-        overflow: "hidden",
-        border: "2px solid var(--color-secondary)",
-        height: "100%"
-      }}
-    >
-      {/* Header */}
-      <div
-        style={{
-          background:
-            "linear-gradient(135deg, var(--color-secondary-dark), var(--color-secondary), var(--color-secondary-light))",
-          padding: "1rem 1.25rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <h3
-          style={{
-            fontFamily: "var(--font-heading)",
-            fontSize: "1.5rem",
-            fontWeight: 700,
-            color: "white",
-            margin: 0,
-          }}
-        >
-          Bảng Xếp Hạng
-        </h3>
-        <span
-          className="hover:underline hover:text-primary cursor-pointer"
-          style={{
-            fontSize: "1rem",
-            color: "rgba(255,255,255,0.8)",
-          }}
-        >
-          Xem tất cả {'>>'}
-        </span>
-      </div>
+    <div className="overflow-x-auto">
+      <table className="w-full border-collapse">
+        <thead>
+          <tr className="bg-gray-50 border-b border-gray-200">
+            <th scope="col" className={`${HEAD_MUTED} w-10`}>#</th>
+            <th scope="col" className={`${HEAD_CELL} px-3 text-left font-semibold text-gray-500`}>
+              Đội
+            </th>
+            <th scope="col" className={HEAD_MUTED} title="Số trận">ST</th>
+            <th scope="col" className={HEAD_MUTED} title="Hiệu số">HS</th>
+            <th scope="col" className={`${HEAD_CELL} px-2 text-center font-bold text-secondary`} title="Điểm">
+              Đ
+            </th>
+            <th scope="col" className={`${HEAD_MUTED} hidden sm:table-cell`}>Phong độ</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((team, index) => {
+            const isHighlighted = team.team === highlightedTeam;
+            // Dòng đội nhà bị tách khỏi nhóm đầu bảng → chèn dòng "⋯" báo có đội bị ẩn
+            const isDetached = index > 0 && team.position !== rows[index - 1].position + 1;
 
-      {/* Table */}
-      <div style={{ overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-          <thead>
-            <tr
-              style={{
-                background: "var(--color-gray-50)",
-                borderBottom: "2px solid var(--color-gray-200)",
-              }}
-            >
-              <th
-                style={{
-                  padding: "0.75rem 0.5rem",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "var(--color-gray-500)",
-                  textAlign: "center",
-                  width: "40px",
-                }}
-              >
-                #
-              </th>
-              <th
-                style={{
-                  padding: "0.75rem 0.75rem",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "var(--color-gray-500)",
-                  textAlign: "left",
-                }}
-              >
-                Đội
-              </th>
-              <th
-                style={{
-                  padding: "0.75rem 0.5rem",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "var(--color-gray-500)",
-                  textAlign: "center",
-                }}
-              >
-                ST
-              </th>
-              <th
-                style={{
-                  padding: "0.75rem 0.5rem",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "var(--color-gray-500)",
-                  textAlign: "center",
-                }}
-              >
-                HS
-              </th>
-              <th
-                style={{
-                  padding: "0.75rem 0.5rem",
-                  fontSize: "0.75rem",
-                  fontWeight: 700,
-                  color: "var(--color-secondary)",
-                  textAlign: "center",
-                }}
-              >
-                Đ
-              </th>
-              <th
-                style={{
-                  padding: "0.75rem 0.75rem",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "var(--color-gray-500)",
-                  textAlign: "center",
-                }}
-              >
-                Phong độ
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {displayTeams?.map((team, index) => {
-              const isHighlighted = team.team === highlightedTeam;
-              return (
+            return (
+              <Fragment key={team.team}>
+                {isDetached && (
+                  <tr aria-hidden="true" className="border-b border-gray-100">
+                    <td colSpan={6} className="py-1 text-center text-xs leading-none text-gray-400">
+                      ⋯
+                    </td>
+                  </tr>
+                )}
                 <tr
-                  key={team.position}
-                  style={{
-                    background: isHighlighted
-                      ? "linear-gradient(90deg, var(--color-primary-dark), var(--color-primary-light))"
-                      : index % 2 === 0
-                      ? "white"
-                      : "var(--color-gray-50)",
-                    borderLeft: isHighlighted
-                      ? "4px solid var(--color-primary)"
-                      : "4px solid transparent",
-                    transition: "background 0.2s ease",
-                  }}
+                  className={`border-b border-gray-100 last:border-b-0 ${
+                    isHighlighted
+                      ? "bg-primary-50 shadow-[inset_4px_0_0_var(--color-primary)]"
+                      : index % 2 === 1
+                        ? "bg-gray-50/60"
+                        : "bg-white"
+                  }`}
                 >
                   <td
-                    style={{
-                      padding: "0.75rem 0.5rem",
-                      fontSize: "0.875rem",
-                      fontWeight: 600,
-                      color:
-                        team.position <= 3
-                          ? "var(--color-primary)"
-                          : "var(--color-gray-600)",
-                      textAlign: "center",
-                    }}
+                    className={`${BODY_CELL} px-2 text-center font-semibold ${
+                      team.position <= 3 ? "text-primary" : "text-gray-600"
+                    }`}
                   >
                     {team.position}
                   </td>
                   <td
-                    style={{
-                      padding: "0.75rem 0.75rem",
-                      fontSize: "0.875rem",
-                      fontWeight: isHighlighted ? 600 : 400,
-                      color: isHighlighted
-                        ? "var(--color-secondary)"
-                        : "var(--color-gray-700)",
-                    }}
+                    className={`${BODY_CELL} px-3 text-left ${
+                      isHighlighted ? "font-bold text-secondary" : "text-gray-700"
+                    }`}
                   >
                     {team.shortName}
                   </td>
-                  <td
-                    style={{
-                      padding: "0.75rem 0.5rem",
-                      fontSize: "0.875rem",
-                      color: "var(--color-gray-600)",
-                      textAlign: "center",
-                    }}
-                  >
-                    {team.played}
-                  </td>
-                  <td
-                    style={{
-                      padding: "0.75rem 0.5rem",
-                      fontSize: "0.875rem",
-                      color: "var(--color-gray-600)",
-                      textAlign: "center",
-                    }}
-                  >
-                    {team.gd > 0 ? `+${team.gd}` : team.gd}
-                  </td>
-                  <td
-                    style={{
-                      padding: "0.75rem 0.5rem",
-                      fontSize: "0.875rem",
-                      fontWeight: 700,
-                      color: "var(--color-secondary)",
-                      textAlign: "center",
-                    }}
-                  >
+                  <td className={BODY_STAT}>{team.played}</td>
+                  <td className={BODY_STAT}>{team.gd > 0 ? `+${team.gd}` : team.gd}</td>
+                  <td className={`${BODY_CELL} px-2 text-center font-bold text-secondary`}>
                     {team.points}
                   </td>
-                  <td
-                    style={{
-                      padding: "0.75rem 0.75rem",
-                      textAlign: "center",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "0.25rem",
-                        justifyContent: "center",
-                      }}
-                    >
-                      {team.form.slice(-5).map((result, i) => (
+                  <td className={`${BODY_STAT} hidden sm:table-cell`}>
+                    <div className="flex justify-center gap-1">
+                      {team.form.map((result, i) => (
                         <span
                           key={i}
-                          style={{
-                            width: "18px",
-                            height: "18px",
-                            borderRadius: "3px",
-                            background: formColors[result],
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontSize: "0.625rem",
-                            fontWeight: 700,
-                            color: "white",
-                          }}
+                          title={RESULT_LABEL[result]}
+                          className={`flex items-center justify-center size-4.5 rounded-[3px] text-[0.625rem] font-bold text-white ${FORM_COLOR[result]}`}
                         >
-                          {result}
+                          {LETTER_BY_RESULT[result]}
                         </span>
                       ))}
                     </div>
                   </td>
                 </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Footer */}
-      {/* <div
-        style={{
-          padding: "0.75rem 1rem",
-          borderTop: "1px solid var(--color-gray-200)",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          fontSize: "0.75rem",
-          color: "var(--color-gray-500)",
-        }}
-      >
-        <span>Hiển thị top {displayTeams?.length} đội</span>
-        <span style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
-          <span style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-            <span
-              style={{
-                width: "10px",
-                height: "10px",
-                background: formColors.W,
-                borderRadius: "2px",
-              }}
-            />
-            Thắng
-          </span>
-          <span style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-            <span
-              style={{
-                width: "10px",
-                height: "10px",
-                background: formColors.D,
-                borderRadius: "2px",
-              }}
-            />
-            Hòa
-          </span>
-          <span style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
-            <span
-              style={{
-                width: "10px",
-                height: "10px",
-                background: formColors.L,
-                borderRadius: "2px",
-              }}
-            />
-            Thua
-          </span>
-        </span>
-      </div> */}
+              </Fragment>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 };

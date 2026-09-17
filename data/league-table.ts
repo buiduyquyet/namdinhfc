@@ -1,3 +1,5 @@
+export type MatchResult = "W" | "D" | "L";
+
 export interface LeagueTableEntry {
   position: number;
   team: string;
@@ -10,129 +12,61 @@ export interface LeagueTableEntry {
   ga: number; // Goals Against
   gd: number; // Goal Difference
   points: number;
-  form: ("W" | "D" | "L")[];
+  /** Kết quả gần nhất, cũ → mới. */
+  form: MatchResult[];
+}
+
+export interface LeagueStandings {
+  competition: string;
+  season: string;
+  /** Bảng được cập nhật sau vòng đấu này. */
+  matchday?: number;
+  entries: LeagueTableEntry[];
 }
 
 export const TEAM_NAME = "Thép Xanh Nam Định";
 
-export const leagueTable: LeagueTableEntry[] = [
-  {
-    position: 1,
-    team: "Thép Xanh Nam Định",
-    shortName: "Nam Định",
-    played: 9,
-    won: 7,
-    drawn: 1,
-    lost: 1,
-    gf: 21,
-    ga: 6,
-    gd: 15,
-    points: 22,
-    form: ["W", "W", "W", "W", "W"],
-  },
-  {
-    position: 2,
-    team: "Công An Hà Nội",
-    shortName: "CAHN",
-    played: 9,
-    won: 6,
-    drawn: 2,
-    lost: 1,
-    gf: 18,
-    ga: 8,
-    gd: 10,
-    points: 20,
-    form: ["W", "D", "W", "W", "L"],
-  },
-  {
-    position: 3,
-    team: "Hà Nội FC",
-    shortName: "Hà Nội",
-    played: 9,
-    won: 5,
-    drawn: 3,
-    lost: 1,
-    gf: 16,
-    ga: 9,
-    gd: 7,
-    points: 18,
-    form: ["D", "W", "W", "D", "W"],
-  },
-  {
-    position: 4,
-    team: "Thanh Hóa",
-    shortName: "Thanh Hóa",
-    played: 9,
-    won: 5,
-    drawn: 1,
-    lost: 3,
-    gf: 14,
-    ga: 11,
-    gd: 3,
-    points: 16,
-    form: ["L", "W", "L", "W", "W"],
-  },
-  {
-    position: 5,
-    team: "Viettel FC",
-    shortName: "Viettel",
-    played: 9,
-    won: 4,
-    drawn: 3,
-    lost: 2,
-    gf: 12,
-    ga: 10,
-    gd: 2,
-    points: 15,
-    form: ["D", "D", "W", "L", "W"],
-  },
-  {
-    position: 6,
-    team: "Hải Phòng",
-    shortName: "Hải Phòng",
-    played: 9,
-    won: 4,
-    drawn: 2,
-    lost: 3,
-    gf: 13,
-    ga: 12,
-    gd: 1,
-    points: 14,
-    form: ["W", "L", "D", "W", "L"],
-  },
-  {
-    position: 7,
-    team: "Hoàng Anh Gia Lai",
-    shortName: "HAGL",
-    played: 9,
-    won: 3,
-    drawn: 3,
-    lost: 3,
-    gf: 11,
-    ga: 13,
-    gd: -2,
-    points: 12,
-    form: ["L", "W", "D", "L", "W"],
-  },
-  {
-    position: 8,
-    team: "Becamex Bình Dương",
-    shortName: "Bình Dương",
-    played: 9,
-    won: 3,
-    drawn: 2,
-    lost: 4,
-    gf: 10,
-    ga: 14,
-    gd: -4,
-    points: 11,
-    form: ["W", "L", "L", "W", "D"],
-  },
+type Row = [string, string, number, number, number, number, number, number, MatchResult[]];
+
+/**
+ * Snapshot V.League 1 2026/27 sau vòng 2 (13/09/2026), nguồn VPF.
+ * Chỉ dùng làm fallback khi không gọi được Payload — dữ liệu chính do admin cập nhật
+ * trong collection "Bảng xếp hạng".
+ */
+const rows: Row[] = [
+  // team, shortName, W, D, L, GF, GA, points, form
+  ["Ninh Bình", "Ninh Bình", 2, 0, 0, 6, 2, 6, ["W", "W"]],
+  ["Sông Lam Nghệ An", "SLNA", 2, 0, 0, 5, 1, 6, ["W", "W"]],
+  ["Công An Hà Nội", "CAHN", 2, 0, 0, 3, 0, 6, ["W", "W"]],
+  ["SHB Đà Nẵng", "Đà Nẵng", 1, 0, 1, 5, 3, 3, ["L", "W"]],
+  [TEAM_NAME, "Nam Định", 1, 0, 1, 4, 3, 3, ["W", "L"]],
+  ["Công An TP.HCM", "CA TP.HCM", 1, 0, 1, 3, 2, 3, ["W", "L"]],
+  ["Thể Công - Viettel", "Viettel", 1, 0, 1, 2, 1, 3, ["W", "L"]],
+  ["Thanh Hóa", "Thanh Hóa", 1, 0, 1, 4, 4, 3, ["W", "L"]],
+  ["Bắc Ninh", "Bắc Ninh", 1, 0, 1, 1, 1, 3, ["L", "W"]],
+  ["Hải Phòng", "Hải Phòng", 1, 0, 1, 4, 5, 3, ["L", "W"]],
+  ["Hồng Lĩnh Hà Tĩnh", "Hà Tĩnh", 1, 0, 1, 1, 2, 3, ["L", "W"]],
+  ["Thành phố Đồng Nai", "Đồng Nai", 0, 0, 2, 0, 3, 0, ["L", "L"]],
+  ["Hà Nội FC", "Hà Nội", 0, 0, 2, 2, 7, 0, ["L", "L"]],
+  ["Hoàng Anh Gia Lai", "HAGL", 0, 0, 2, 1, 7, 0, ["L", "L"]],
 ];
 
-// Helper để lấy top N đội
-export const getTopTeams = (n: number = 5) => leagueTable.slice(0, n);
-
-// Helper để lấy vị trí của Nam Định
-export const getNamDinhPosition = () =>
-  leagueTable.find((t) => t.team === TEAM_NAME);
+export const leagueStandings: LeagueStandings = {
+  competition: "V.League 1",
+  season: "2026/27",
+  matchday: 2,
+  entries: rows.map(([team, shortName, won, drawn, lost, gf, ga, points, form], index) => ({
+    position: index + 1,
+    team,
+    shortName,
+    played: won + drawn + lost,
+    won,
+    drawn,
+    lost,
+    gf,
+    ga,
+    gd: gf - ga,
+    points,
+    form,
+  })),
+};
