@@ -1,8 +1,14 @@
+import ArrowRight from "@/components/icons/ArrowRight";
+import Link from "next/link";
+
 interface SectionTitleProps {
   title: string;
   subtitle?: string;
   align?: "left" | "center";
   light?: boolean;
+  variant?: "default" | "editorial";
+  eyebrow?: string;
+  action?: { label: string; href: string };
 }
 
 const SectionTitle = ({
@@ -10,7 +16,27 @@ const SectionTitle = ({
   subtitle,
   align = "center",
   light = false,
+  variant = "default",
+  eyebrow,
+  action,
 }: SectionTitleProps) => {
+  if (variant === "editorial") {
+    return (
+      <div className={`home-section-heading ${light ? "home-section-heading-light" : ""}`}>
+        <div>
+          {eyebrow && <p className="home-eyebrow">{eyebrow}</p>}
+          <h2>{title}</h2>
+          {subtitle && <p className="home-section-description">{subtitle}</p>}
+        </div>
+        {action && (
+          <Link href={action.href} className="home-text-link">
+            {action.label} <ArrowRight />
+          </Link>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div
       style={{

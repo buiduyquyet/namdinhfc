@@ -13,7 +13,7 @@ const statsItems = [
   },
   {
     value: clubStats.fans,
-    label: "Ngưởi hâm mộ",
+    label: "Người hâm mộ",
     suffix: "+",
   },
 ];
@@ -21,10 +21,11 @@ const statsItems = [
 const StatsSection = () => {
   return (
     <SectionDark
-      title="Con Số Ấn Tượng"
-      subtitle="Gần 60 năm xây dựng và phát triển cùng bóng đá Việt Nam"
-      chidlren={<StatsCounter items={statsItems} />}
-    />
+      title="Dấu ấn thành Nam"
+      subtitle="Hành trình gắn bó cùng bóng đá Việt Nam từ năm 1965."
+    >
+      <StatsCounter items={statsItems} />
+    </SectionDark>
   );
 };
 

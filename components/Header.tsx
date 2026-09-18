@@ -86,24 +86,24 @@ const Header = () => {
           right: 0,
           zIndex: 1000,
           transition: "all var(--transition-base)",
-          backgroundColor: "var(--color-primary-dark)",
+          backgroundColor: "var(--color-secondary)",
           boxShadow: isScrolled ? "0 2px 12px rgba(0, 0, 0, 0.2)" : "none",
         }}
       >
-        <div style={{ width: "100%", maxWidth: "1280px", margin: "0 auto" }}>
+        <div className="container">
           <nav
             style={{
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              padding: "10px 5px 10px 1rem",
+              height: "75px",
               transition: "height var(--transition-base)",
             }}
           >
             {/* Logo */}
             <Link
               href="/"
-              onClick={(e) => handleNavClick(e, "#trang-chu")}
+              onClick={(e) => handleNavClick(e, "/")}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -113,11 +113,11 @@ const Header = () => {
               }}
             >
               <Image
-                width={65}
-                height={65}
+                width={52}
+                height={52}
                 src="/main-logo.jpg"
                 className="rounded-full"
-                alt="main-logo-namdinhfc"
+                alt="Logo Thép Xanh Nam Định FC"
               />
               <div>
                 <div
@@ -125,7 +125,7 @@ const Header = () => {
                     fontFamily: "var(--font-heading)",
                     fontWeight: 600,
                     fontSize: "0.625rem",
-                    color: "var(--color-primary)",
+                    color: "var(--color-primary-light)",
                     lineHeight: 1.2,
                     textTransform: "uppercase",
                     letterSpacing: "0.1em",
@@ -161,7 +161,9 @@ const Header = () => {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="mobile-menu-btn"
-              aria-label="Toggle navigation menu"
+              aria-label={isMobileMenuOpen ? "Đóng menu" : "Mở menu"}
+              aria-expanded={isMobileMenuOpen}
+              aria-controls="mobile-navigation"
               style={{
                 display: "none",
                 flexDirection: "column",
@@ -191,7 +193,7 @@ const Header = () => {
                     display: "block",
                     width: "22px",
                     height: "2px",
-                    backgroundColor: "var(--color-primary)",
+                    backgroundColor: "var(--color-primary-light)",
                     borderRadius: "2px",
                     transition: "all var(--transition-base)",
                     ...(transform !== undefined ? { transform } : {}),

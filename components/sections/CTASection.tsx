@@ -1,67 +1,22 @@
+import ArrowRight from "@/components/icons/ArrowRight";
+import Image from "next/image";
 import Link from "next/link";
-import SectionBackground from "./SectionBackground";
+import SectionTitle from "@/components/SectionTitle";
 
-const containerStyles = {
-  position: "relative" as const,
-  zIndex: 1,
-};
-
-const titleStyles = {
-  fontFamily: "var(--font-heading)",
-  fontSize: "clamp(1.75rem, 4vw, 2.5rem)",
-  fontWeight: 800,
-  color: "var(--color-secondary)",
-  textTransform: "uppercase" as const,
-  marginBottom: "1rem",
-};
-
-const descriptionStyles = {
-  fontSize: "1.0625rem",
-  color: "var(--color-secondary)",
-  maxWidth: "560px",
-  margin: "0 auto 2rem",
-  lineHeight: 1.7,
-};
-
-const buttonContainerStyles = {
-  display: "flex",
-  gap: "1rem",
-  justifyContent: "center",
-  flexWrap: "wrap" as const,
-};
-
-const CTASection = () => {
+export default function CTASection() {
   return (
-    <section
-      id="lien-he"
-      style={{
-        padding: "5rem 0",
-        background:
-          "linear-gradient(135deg, var(--color-primary), var(--color-primary-light))",
-        textAlign: "center",
-        position: "relative",
-        overflow: "hidden",
-      }}
-    >
-      <SectionBackground variant="dots" />
-
-      <div className="container" style={containerStyles}>
-        <h2 style={titleStyles}>Khám Phá Chảo Lửa Thiên Trường</h2>
-        <p style={descriptionStyles}>
-          Sân vận động 30.000 chỗ ngồi — nơi tình yêu bóng đá cháy bỏng nhất
-          Việt Nam
-        </p>
-        <div style={buttonContainerStyles}>
-          <Link href="/about" className="btn btn-primary">
-            Tìm Hiểu Thêm
-          </Link>
-          <Link href="/contact" className="btn btn-outline">
-            Liên Hệ Với CLB
-          </Link>
-        </div>
+    <section id="lien-he" className="home-stadium">
+      <Image src="/cdv-1.jpg" alt="Không khí cuồng nhiệt trên khán đài cổ động viên Nam Định"
+        fill sizes="100vw" className="object-cover" />
+      <div className="home-stadium-shade" aria-hidden="true" />
+      <div className="container relative z-10">
+        <SectionTitle variant="editorial" eyebrow="Hẹn nhau ở Thiên Trường"
+          title="Cùng chung một nhịp đập."
+          subtitle="Cảm nhận tình yêu bóng đá thành Nam, từ mặt cỏ đến những khán đài rực lửa." light />
+        <Link href="/about" className="btn btn-outline">
+          Khám phá Thiên Trường <ArrowRight />
+        </Link>
       </div>
     </section>
   );
-};
-
-export default CTASection;
+}

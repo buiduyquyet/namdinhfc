@@ -85,7 +85,7 @@ const StatsCounter = ({ items }: StatsCounterProps) => {
             ref={ref}
             style={{
                 display: "grid",
-                gridTemplateColumns: `repeat(${Math.min(items.length, 2)}, 1fr)`,
+                gridTemplateColumns: `repeat(${Math.min(items.length, 2)}, minmax(0, 1fr))`,
                 gap: "1.5rem",
             }}
             className="stats-grid"
@@ -95,7 +95,9 @@ const StatsCounter = ({ items }: StatsCounterProps) => {
                     key={item.label}
                     style={{
                         textAlign: "center",
-                        padding: "2rem 1rem",
+                        padding: "1.5rem 0.75rem",
+                        minWidth: 0,
+                        containerType: "inline-size",
                         borderRadius: "var(--radius-lg)",
                         backgroundColor: "rgba(152, 197, 233, 0.06)",
                         border: "1px solid rgba(152, 197, 233, 0.1)",
@@ -105,9 +107,9 @@ const StatsCounter = ({ items }: StatsCounterProps) => {
                     }}
                 >
                     <div
+                        className="stats-value"
                         style={{
                             fontFamily: "var(--font-heading)",
-                            fontSize: "clamp(2rem, 5vw, 3rem)",
                             fontWeight: 900,
                             color: "var(--color-primary-50)",
                             lineHeight: 1,
@@ -125,7 +127,7 @@ const StatsCounter = ({ items }: StatsCounterProps) => {
                         style={{
                             fontSize: "0.8125rem",
                             fontWeight: 600,
-                            color: "rgba(255, 255, 255, 0.5)",
+                            color: "var(--color-gray-300)",
                             textTransform: "uppercase",
                             letterSpacing: "0.08em",
                             fontFamily: "var(--font-heading)",
@@ -137,9 +139,9 @@ const StatsCounter = ({ items }: StatsCounterProps) => {
             ))}
 
             <style jsx global>{`
-        @media (min-width: 768px) {
+        @media (min-width: 1024px) {
           .stats-grid {
-            grid-template-columns: repeat(${items.length}, 1fr) !important;
+            grid-template-columns: repeat(${items.length}, minmax(0, 1fr)) !important;
           }
         }
       `}</style>

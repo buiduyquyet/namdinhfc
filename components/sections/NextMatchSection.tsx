@@ -24,11 +24,13 @@ export default async function NextMatchSection() {
     : undefined;
 
   return (
-    <section id="lich-thi-dau" className="section">
+    <section id="lich-thi-dau" className="home-section home-match-section">
       <div className="container">
         <SectionTitle
-          title="Lịch Thi Đấu & Bảng Xếp Hạng"
-          subtitle="Trận đấu tiếp theo và thứ hạng hiện tại của Thép Xanh Nam Định tại V.League"
+          variant="editorial"
+          eyebrow="Đồng hành cùng đội bóng"
+          title="Tâm điểm sân cỏ"
+          action={{ label: "Lịch thi đấu", href: "/fixtures" }}
         />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <PanelCard

@@ -1,3 +1,4 @@
+import ArrowRight from "@/components/icons/ArrowRight";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -27,18 +28,7 @@ const PanelCard = ({ title, caption, action, children }: PanelCardProps) => (
           className="group inline-flex items-center gap-1 shrink-0 text-sm font-semibold text-primary-light transition-colors hover:text-white"
         >
           {action.label}
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            aria-hidden="true"
-            className="transition-transform group-hover:translate-x-0.5"
-          >
-            <path d="M5 12h14M13 6l6 6-6 6" />
-          </svg>
+          <ArrowRight />
         </Link>
       )}
     </div>

@@ -11,7 +11,7 @@ Nguồn sự thật duy nhất: [`app/globals.css`](../app/globals.css). File n�
 | Token | Giá trị | Tailwind class | Dùng cho |
 |---|---|---|---|
 | `--color-primary` | `#3B82F6` | `text-primary` `bg-primary` | Màu nhấn chính, số liệu, link hover |
-| `--color-primary-dark` | `#6BAED6` | `bg-primary-dark` | Nền header, đầu gradient |
+| `--color-primary-dark` | `#6BAED6` | `bg-primary-dark` | Màu xanh phụ, đầu gradient |
 | `--color-primary-light` | `#B8D8F0` | `bg-primary-light` | Nền nav item active, cuối gradient |
 | `--color-primary-50` | `#EDF5FC` | — | Nền badge nhạt |
 | `--color-primary-100` | `#D4E9F7` | — | Nền nhạt |
@@ -128,26 +128,26 @@ bất kể specificity, nên để trong layer thì thanh cuộn vẫn hiện ra
 
 | Component | Loại | Mô tả |
 |---|---|---|
-| `Header` | client | Fixed top, `zIndex: 1000`, nền `primary-dark`, đổi shadow khi scroll >20px. `NAV_ITEMS` khai báo ngay trong file. Smooth-scroll cho link `/#section` |
+| `Header` | client | Fixed top, `zIndex: 1000`, nền `secondary`, cao 75px, đổi shadow khi scroll >20px. `NAV_ITEMS` khai báo ngay trong file. Smooth-scroll cho link `/#section` |
 | `DesktopNav` | server | Ul nav ngang, ẩn dưới `1024px` (qua class `.desktop-nav`) |
 | `MobileMenu` | server | Overlay full-screen nền navy, stagger fadeInUp theo index |
 | `Footer` | client | Chân trang |
 | `PageHero` | client | Hero cho trang con: `paddingTop 160px`, nền navy + `SectionBackground` + watermark logo + breadcrumbs |
-| `SectionTitle` | server | Tiêu đề section chuẩn: `title` / `subtitle?` / `align?` / `light?`. **Dùng cho mọi section trang chủ + squad** |
+| `SectionTitle` | server | Tiêu đề section chuẩn: `title` / `subtitle?` / `align?` / `light?`; homepage dùng `variant="editorial"`, thêm `eyebrow?` và `action?` (label/href). **Dùng cho mọi section trang chủ + squad** |
 | `about/SectionTitle` | client | Biến thể riêng trang About: có `highlight` (từ tô màu primary). ⚠️ Trùng chức năng — nên hợp nhất |
-| `SectionDark` | server | Wrapper section nền gradient primary: tự bọc `SectionBackground` + `SectionTitle light` + `.container` |
+| `SectionDark` | server | Wrapper section nền navy cho thành tích: `SectionTitle variant="editorial" light` + `.container`, nhận React `children` |
 | `sections/SectionBackground` | client | Lớp trang trí nền: `variant="dots" \| "dots-double" \| "radial" \| "full"` |
 
 ### Content components
 
 | Component | Loại | Mô tả |
 |---|---|---|
-| `PlayerCard` | server | Card cầu thủ: gradient primary, watermark logo, số áo lớn nền, badge vị trí, avatar tròn, dòng quốc tịch · chiều cao · cân nặng |
+| `PlayerCard` | server | Card cầu thủ: mặc định gradient primary; `variant="home"` dùng navy trên homepage; watermark logo, số áo lớn nền, badge vị trí, avatar tròn, dòng quốc tịch (chiều cao/cân nặng chỉ xuất hiện ở hồ sơ chi tiết) |
 | `PlayerCarousel` | client | Carousel cầu thủ 1 hàng, cuộn ngang bằng scroll-snap (không dùng thư viện ngoài). Autoplay 4.5s, tạm dừng khi hover/focus/chạm, tự tắt khi bật giảm chuyển động. Mũi tên hiện từ `md`, số dot bám theo số trang cuộn thật (đo bằng `ResizeObserver`), ẩn cả hai khi mọi slide đã vừa khung |
 | `PanelCard` | server | Khung `.card` có dải tiêu đề navy + thân trắng: `title` / `caption?` / `action?: { label, href }`. Dùng khi đặt nhiều khối thông tin cạnh nhau để chúng chung một kiểu (Trận kế tiếp, Bảng xếp hạng) |
 | `MatchCard` | server | Card trận đấu: `variant="default"` là `.card` độc lập; `"featured"` chỉ là phần nội dung cỡ lớn, **phải đặt trong `PanelCard`**. Tự đổi tỉ số ↔ giờ theo `status`, hiện logo đội nếu có (Nam Định fallback `main-logo.png`, đội khác viết tắt tên), nút Mua vé / Xem highlight |
 | `LeagueTable` | server | Bảng xếp hạng (chỉ phần `<table>`, đặt trong `PanelCard`). `limit` để rút gọn — bản rút gọn luôn giữ dòng Nam Định, chèn dòng "⋯" nếu bị tách khỏi top. Dữ liệu từ `lib/standings-api.ts` |
-| `StatsCounter` | client | Dãy số liệu đếm — nhận `items: { value, label, suffix? }[]` |
+| `StatsCounter` | client | Dãy số liệu đếm — nhận `items: { value, label, suffix? }[]`; số dùng `cqw` theo chiều rộng nội dung từng thẻ để giữ nguyên số đầy đủ mà không tràn |
 | `ImageSlider` | client | Slider fade tự động: `images` / `interval=5000` / `priority` + dot indicator |
 | `news/NewsCard` | server | Card bài viết: ảnh 16:9 (`aspect-video`), badge chuyên mục, ngày, tiêu đề `line-clamp-2`, tóm tắt `line-clamp-3` |
 | `news/CategoryTabs` | server | Dải tab lọc chuyên mục — điều hướng bằng `<Link>`, không cần client |
@@ -157,9 +157,9 @@ bất kể specificity, nên để trong layer thì thanh cuộn vẫn hiện ra
 ### Sections trang chủ (`components/sections/`)
 
 Thứ tự trong `app/(main)/page.tsx`:
-`HeroSection` → `AboutSection` → `NextMatchSection` → `StatsSection` → `FeaturedPlayersSection` → `LatestResultsSection` → `NewsSection` → `CTASection`
+`HeroSection` → `NextMatchSection` → `NewsSection` → `LatestResultsSection` → `FeaturedPlayersSection` → `AboutSection` → `StatsSection` → `CTASection`
 
-Nền các section phải xen kẽ để phân tách thị giác: `LatestResultsSection` dùng `.section-alt` (xám) nên `NewsSection` dùng `.section` (trắng).
+Homepage bọc `.home-page`, dùng `.home-section` với khoảng cách responsive. Lịch đấu, kết quả và câu chuyện CLB dùng xám nhạt; tin tức và cầu thủ dùng trắng; thành tích dùng navy. Hero dùng `HeroSlideshow`: 3 ảnh nền hòa ảnh mỗi 8 giây, zoom nhẹ, chọn ảnh thủ công bằng chấm điều hướng, tiếp tục tự chạy sau khi chọn; không có nút dừng/phát; tự tắt autoplay/zoom khi giảm chuyển động. Hero giữ một H1, mô tả ngắn và liên kết tới lịch đấu/tin tức; CTA cuối trang dùng ảnh khán đài. Bố cục tin tức có một bài chính (ảnh 16:10) và tối đa hai bài phụ (ảnh vuông ở mọi breakpoint), tự thu về một cột trên mobile. Liên kết điều hướng homepage dùng SVG `icons/ArrowRight`, không dùng ký tự mũi tên Unicode. Quy tắc `.btn` mới chỉ áp dụng trong `.home-page`; trang con giữ kiểu nút hiện có.
 
 Export qua barrel `components/sections/index.ts`.
 
@@ -177,7 +177,7 @@ Export qua barrel `components/sections/index.ts`.
 
 | ID | Section |
 |---|---|
-| `gioi-thieu` | AboutSection |
+| `about` | AboutSection |
 | `lich-thi-dau` | NextMatchSection |
 | `doi-hinh` | FeaturedPlayersSection |
 | `tin-tuc` | NewsSection |
@@ -218,5 +218,3 @@ grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6
 1. **`<style jsx global>`** trong `Header.tsx`, `Footer.tsx`, `StatsCounter.tsx` — nên chuyển sang Tailwind responsive utility.
 2. **Inline style dày đặc**: `Footer` (~26), `SectionTitle` — nên migrate dần sang Tailwind class. `MatchCard`, `LeagueTable` đã migrate xong, dùng làm mẫu.
 3. **Hai `SectionTitle`** (root + `about/`) trùng chức năng — cần hợp nhất thành một component có prop `highlight`.
-4. **Typo prop `chidlren`** trong `SectionDark.tsx` — nên đổi thành `children` (React children thật) khi có dịp refactor.
-5. `HeroSection` không có nội dung text — chỉ là slider + lớp trang trí.

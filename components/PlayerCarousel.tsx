@@ -109,7 +109,7 @@ const PlayerCarousel = ({ players }: PlayerCarouselProps) => {
             href={`/squad/${player.slug}`}
             className="snap-start shrink-0 basis-[85%] sm:basis-[calc((100%-1.5rem)/2)] lg:basis-[calc((100%-3rem)/3)] xl:basis-[calc((100%-4.5rem)/4)] no-underline text-inherit"
           >
-            <PlayerCard player={player} index={index} />
+            <PlayerCard player={player} index={index} variant="home" />
           </Link>
         ))}
       </div>

@@ -12,11 +12,12 @@ interface MobileMenuProps {
   onNavClick: (e: React.MouseEvent<HTMLAnchorElement>, href: string) => void;
 }
 
-// Chiều cao header: logo 65px + padding dọc 5px x 2
+// Đồng bộ với chiều cao cố định của Header.
 const HEADER_HEIGHT = 75;
 
 const MobileMenu = ({ items, isActive, pathname, onNavClick }: MobileMenuProps) => (
   <div
+    id="mobile-navigation"
     style={{
       position: "fixed",
       inset: 0,
@@ -53,7 +54,7 @@ const MobileMenu = ({ items, isActive, pathname, onNavClick }: MobileMenuProps) 
               fontWeight: isCurrentActive ? 700 : 500,
               fontSize: "1rem",
               color: isCurrentActive
-                ? "var(--color-primary)"
+                ? "var(--color-primary-light)"
                 : "rgba(255, 255, 255, 0.8)",
               textDecoration: "none",
               borderRadius: "var(--radius-md)",

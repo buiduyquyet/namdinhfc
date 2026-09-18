@@ -4,18 +4,13 @@ import Image from "next/image";
 interface PlayerCardProps {
     player: Player;
     index?: number;
+    variant?: "default" | "home";
 }
 
-const PlayerCard = ({ player, index = 0 }: PlayerCardProps) => {
-    // Chiều cao / cân nặng là tuỳ chọn — chỉ hiện phần đã nhập
-    const details = [
-        player.height ? `${player.height} cm` : null,
-        player.weight ? `${player.weight} kg` : null,
-    ].filter((detail): detail is string => detail !== null);
-
+const PlayerCard = ({ player, index = 0, variant = "default" }: PlayerCardProps) => {
     return (
         <div
-            className="group relative overflow-hidden cursor-pointer animate-fade-in-up bg-linear-to-br from-primary to-primary-dark rounded-2xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transition-all duration-300"
+            className={`group relative overflow-hidden cursor-pointer animate-fade-in-up hover:-translate-y-2 transition-all duration-300 ${variant === "home" ? "player-card" : "bg-linear-to-br from-primary to-primary-dark rounded-2xl shadow-lg hover:shadow-2xl"}`}
             style={{
                 animationDelay: `${index * 80}ms`,
             }}
@@ -80,14 +75,7 @@ const PlayerCard = ({ player, index = 0 }: PlayerCardProps) => {
                     </h3>
                 </div>
 
-                <div className="flex justify-between flex-wrap gap-x-2 gap-y-1 text-sm text-white/80 font-medium mb-4">
-                    <span>{player.nationality}</span>
-                    {details.map((detail) => (
-                        <span key={detail} className="flex items-center gap-2 before:content-[''] before:block before:w-1 before:h-1 before:rounded-full before:bg-white/40">
-                            {detail}
-                        </span>
-                    ))}
-                </div>
+                <p className="text-sm text-white/80 font-medium mb-4">{player.nationality}</p>
             </div>
         </div>
     );

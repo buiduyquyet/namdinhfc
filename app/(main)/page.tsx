@@ -11,15 +11,15 @@ import {
 
 export default function HomePage() {
   return (
-    <>
+    <div className="home-page">
       <HeroSection />
-      <AboutSection />
       <NextMatchSection />
-      <StatsSection />
-      <FeaturedPlayersSection />
-      <LatestResultsSection />
       <NewsSection />
+      <LatestResultsSection />
+      <FeaturedPlayersSection />
+      <AboutSection />
+      <StatsSection />
       <CTASection />
-    </>
+    </div>
   );
 }
