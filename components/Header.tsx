@@ -96,7 +96,7 @@ const Header = () => {
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
-              padding: "5px 5px 5px 1rem",
+              padding: "10px 5px 10px 1rem",
               transition: "height var(--transition-base)",
             }}
           >

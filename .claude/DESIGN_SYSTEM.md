@@ -168,7 +168,7 @@ Export qua barrel `components/sections/index.ts`.
 - `components/squad/`: `PlayerSection` (nhóm cầu thủ theo vị trí), `SquadStats` (dải số liệu nền navy)
 - `components/about/`: `ClubHistory`, `Timeline`, `StadiumSection`, `SectionTitle`
 - `components/news/`: `NewsCard`, `CategoryTabs`, `Pagination`, `ArticleContent`
-- `components/fixtures/`: `FixtureFilters` (tab Lịch/Kết quả + lọc giải), `MatchMonthGroup` (nhóm trận theo tháng)
+- `components/fixtures/`: `FixturesBrowser` (client — giữ state tab + giải, cuộn về cụm tab khi đổi tab; **bộ lọc không ghi lên URL**, chỉ `?tab=` được đọc lúc mở trang), `FixtureTabs` (segmented control, viên chỉ báo trượt bằng `transition-transform`, mobile 3 cột đều), `CompetitionFilter` (hàng pill lọc giải, mobile cuộn ngang), `FixtureEmptyState`, `MatchMonthGroup` (nhóm trận theo tháng)
 - `components/admin/`: `ImportPlayersButton` — inject vào Payload admin qua `admin.components.beforeList` trong `collections/Players.ts`
 
 ---

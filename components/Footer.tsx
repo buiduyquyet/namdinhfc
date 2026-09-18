@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { clubInfo } from "@/data/club-info";
 
@@ -69,23 +70,13 @@ const Footer = () => {
                                 marginBottom: "1.25rem",
                             }}
                         >
-                            <div
-                                style={{
-                                    width: "48px",
-                                    height: "48px",
-                                    borderRadius: "50%",
-                                    background: "var(--color-primary)",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    color: "var(--color-secondary)",
-                                    fontFamily: "var(--font-heading)",
-                                    fontWeight: 800,
-                                    fontSize: "1rem",
-                                }}
-                            >
-                                NĐ
-                            </div>
+                            <Image
+                                src="/main-logo.png"
+                                alt="Logo Thép Xanh Nam Định FC"
+                                width={56}
+                                height={56}
+                                style={{ flexShrink: 0 }}
+                            />
                             <div>
                                 <div
                                     style={{
