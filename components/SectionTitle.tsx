@@ -1,5 +1,4 @@
-import ArrowRight from "@/components/icons/ArrowRight";
-import Link from "next/link";
+import SectionAction from "@/components/SectionAction";
 
 interface SectionTitleProps {
   title: string;
@@ -23,16 +22,12 @@ const SectionTitle = ({
   if (variant === "editorial") {
     return (
       <div className={`home-section-heading ${light ? "home-section-heading-light" : ""}`}>
-        <div>
-          {eyebrow && <p className="home-eyebrow">{eyebrow}</p>}
+        {eyebrow && <p className="home-eyebrow">{eyebrow}</p>}
+        <div className="home-section-title-row">
           <h2>{title}</h2>
-          {subtitle && <p className="home-section-description">{subtitle}</p>}
+          {action && <SectionAction label={action.label} href={action.href} />}
         </div>
-        {action && (
-          <Link href={action.href} className="home-text-link">
-            {action.label} <ArrowRight />
-          </Link>
-        )}
+        {subtitle && <p className="home-section-description">{subtitle}</p>}
       </div>
     );
   }

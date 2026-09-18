@@ -37,7 +37,6 @@ export default async function NewsSection() {
                   </div>
                   <h3>{item.title}</h3>
                   {item.excerpt && <p>{item.excerpt}</p>}
-                  <span className="home-news-read">Đọc bài viết <ArrowRight /></span>
                 </div>
               </Link>
             </article>
