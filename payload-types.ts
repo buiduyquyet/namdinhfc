@@ -132,6 +132,8 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Tài khoản đăng nhập vào trang quản trị.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -215,6 +217,8 @@ export interface Player {
   createdAt: string;
 }
 /**
+ * Ảnh và tệp dùng chung cho toàn site.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */

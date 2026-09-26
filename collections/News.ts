@@ -14,6 +14,7 @@ const fillSlugFromTitle: FieldHook = ({ data, value }) => {
 
 export const News: CollectionConfig = {
   slug: 'news',
+  labels: { singular: 'Bài viết', plural: 'Tin tức' },
   access: {
     // Payload tự ẩn bản nháp khỏi request chưa đăng nhập khi bật `versions.drafts`,
     // nên chỉ cần mở read cho trang public.

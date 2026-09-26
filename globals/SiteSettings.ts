@@ -6,7 +6,7 @@ export const SiteSettings: GlobalConfig = {
   slug: 'site-settings',
   label: 'Cấu hình trang',
   access: {
-    // Public read so the squad page can resolve the active source without auth
+    // Trang Đội hình cần đọc nguồn dữ liệu đang chọn nên phải mở quyền đọc
     read: () => true,
   },
   fields: [

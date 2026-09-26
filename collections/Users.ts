@@ -2,9 +2,12 @@ import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
   slug: 'users',
+  labels: { singular: 'Người dùng', plural: 'Người dùng' },
   auth: true,
   admin: {
     useAsTitle: 'email',
+    defaultColumns: ['email', 'name', 'role'],
+    description: 'Tài khoản đăng nhập vào trang quản trị.',
   },
   fields: [
     {
@@ -17,7 +20,7 @@ export const Users: CollectionConfig = {
       type: 'select',
       label: 'Vai trò',
       options: [
-        { label: 'Admin', value: 'admin' },
+        { label: 'Quản trị viên', value: 'admin' },
         { label: 'Biên tập viên', value: 'editor' },
       ],
       defaultValue: 'admin',

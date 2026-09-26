@@ -16,8 +16,9 @@ const fillSlugFromName: FieldHook = ({ data, value }) => {
 
 export const Players: CollectionConfig = {
   slug: 'players',
+  labels: { singular: 'Cầu thủ', plural: 'Cầu thủ' },
   access: {
-    // Allow public read access so the squad page can fetch players without auth
+    // Trang Đội hình là trang public nên cần mở quyền đọc
     read: () => true,
   },
   admin: {
