@@ -7,6 +7,7 @@ import sharp from 'sharp'
 
 import { Users } from './collections/Users'
 import { Players } from './collections/Players'
+import { Clubs } from './collections/Clubs'
 import { News } from './collections/News'
 import { Matches } from './collections/Matches'
 import { Media } from './collections/Media'
@@ -22,7 +23,7 @@ export default buildConfig({
   admin: {
     user: Users.slug,
   },
-  collections: [Users, Players, News, Matches, Standings, Media],
+  collections: [Users, Players, News, Clubs, Matches, Standings, Media],
   globals: [SiteSettings],
   editor: lexicalEditor({}),
   // Bắt buộc để chức năng cắt ảnh / focal point trong admin hoạt động —

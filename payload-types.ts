@@ -70,6 +70,7 @@ export interface Config {
     users: User;
     players: Player;
     news: News;
+    clubs: Club;
     matches: Match;
     standings: Standing;
     media: Media;
@@ -83,6 +84,7 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     players: PlayersSelect<false> | PlayersSelect<true>;
     news: NewsSelect<false> | NewsSelect<true>;
+    clubs: ClubsSelect<false> | ClubsSelect<true>;
     matches: MatchesSelect<false> | MatchesSelect<true>;
     standings: StandingsSelect<false> | StandingsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -269,16 +271,44 @@ export interface News {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Danh bạ các đội bóng. Trận đấu chọn đội từ đây nên logo chỉ cần khai báo một lần.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clubs".
+ */
+export interface Club {
+  id: string;
+  name: string;
+  league: 'V.League 1' | 'Hạng Nhất Quốc gia' | 'Khác';
+  season?: string | null;
+  logo?: (string | null) | Media;
+  /**
+   * Dùng khi logo nằm ở nơi khác (VD: link vpf.vn trong file Excel). Bỏ trống nếu đã upload logo ở trên.
+   */
+  logoUrl?: string | null;
+  stadium?: string | null;
+  city?: string | null;
+  /**
+   * Để trống sẽ tự sinh từ tên đội.
+   */
+  slug?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Đội nhà / đội khách chọn từ collection Đội bóng — logo đi theo đội, không nhập lại ở đây.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "matches".
  */
 export interface Match {
   id: string;
+  title?: string | null;
   date: string;
-  homeTeam: string;
-  awayTeam: string;
-  homeLogo?: (string | null) | Media;
-  awayLogo?: (string | null) | Media;
+  homeClub: string | Club;
+  awayClub: string | Club;
+  homeTeam?: string | null;
+  awayTeam?: string | null;
   competition: 'V.League 1' | 'Cúp Quốc Gia' | 'AFC Champions League Two';
   status: 'Chưa đá' | 'Đã kết thúc' | 'Đang diễn ra' | 'Bị hoãn';
   /**
@@ -317,11 +347,15 @@ export interface Standing {
   rows?:
     | {
         position: number;
-        team: string;
+        /**
+         * Logo hiển thị trong bảng lấy theo đội đã chọn.
+         */
+        club: string | Club;
         /**
          * Hiển thị trong bảng. Để trống sẽ dùng tên đội.
          */
         shortName?: string | null;
+        team?: string | null;
         played: number;
         won: number;
         drawn: number;
@@ -374,6 +408,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'news';
         value: string | News;
+      } | null)
+    | ({
+        relationTo: 'clubs';
+        value: string | Club;
       } | null)
     | ({
         relationTo: 'matches';
@@ -494,14 +532,31 @@ export interface NewsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "clubs_select".
+ */
+export interface ClubsSelect<T extends boolean = true> {
+  name?: T;
+  league?: T;
+  season?: T;
+  logo?: T;
+  logoUrl?: T;
+  stadium?: T;
+  city?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "matches_select".
  */
 export interface MatchesSelect<T extends boolean = true> {
+  title?: T;
   date?: T;
+  homeClub?: T;
+  awayClub?: T;
   homeTeam?: T;
   awayTeam?: T;
-  homeLogo?: T;
-  awayLogo?: T;
   competition?: T;
   status?: T;
   homeScore?: T;
@@ -526,8 +581,9 @@ export interface StandingsSelect<T extends boolean = true> {
     | T
     | {
         position?: T;
-        team?: T;
+        club?: T;
         shortName?: T;
+        team?: T;
         played?: T;
         won?: T;
         drawn?: T;

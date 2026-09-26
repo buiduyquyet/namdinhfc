@@ -4,6 +4,8 @@ export interface LeagueTableEntry {
   position: number;
   team: string;
   shortName: string;
+  /** URL logo lấy từ collection Đội bóng. Bỏ trống thì bảng hiện chữ viết tắt. */
+  logo?: string;
   played: number;
   won: number;
   drawn: number;

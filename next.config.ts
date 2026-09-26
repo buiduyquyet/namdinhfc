@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       // Ảnh upload qua Payload khi deploy — lưu ở Vercel Blob
       { protocol: 'https', hostname: '*.public.blob.vercel-storage.com' },
+      // Logo các CLB lấy từ file Excel của VPF (field "URL logo" trong collection Đội bóng)
+      { protocol: 'https', hostname: 'vpf.vn' },
+      { protocol: 'https', hostname: 'www.vpf.vn' },
     ],
   },
 };

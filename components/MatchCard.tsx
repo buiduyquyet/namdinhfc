@@ -1,6 +1,5 @@
-import Image from "next/image";
-
-import { TEAM_NAME, type Match } from "@/data/matches";
+import TeamLogo from "@/components/TeamLogo";
+import { type Match } from "@/data/matches";
 import { formatWeekdayDate } from "@/lib/format-date";
 
 interface MatchCardProps {
@@ -11,56 +10,6 @@ interface MatchCardProps {
    */
   variant?: "default" | "featured";
 }
-
-interface TeamLogoProps {
-  name: string;
-  logo?: string;
-  size?: number;
-}
-
-/** Logo CLB có sẵn trong `public/`, dùng khi trận chưa upload logo riêng cho Nam Định. */
-const CLUB_LOGO = "/main-logo.png";
-
-/** Viết tắt tên đội khi chưa upload logo: "Hà Nội FC" -> "HN". */
-function getInitials(name: string): string {
-  if (name === TEAM_NAME) return "NĐ";
-
-  return name
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
-}
-
-const TeamLogo = ({ name, logo, size = 44 }: TeamLogoProps) => {
-  const isNamDinh = name === TEAM_NAME;
-  const src = logo || (isNamDinh ? CLUB_LOGO : undefined);
-
-  if (src) {
-    return (
-      <div
-        className="relative rounded-full overflow-hidden bg-white shrink-0"
-        style={{ width: size, height: size }}
-      >
-        <Image src={src} alt={name} fill sizes={`${size}px`} className="object-contain" />
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={`rounded-full flex items-center justify-center font-heading font-extrabold shrink-0 ${
-        isNamDinh
-          ? "bg-primary text-secondary shadow-md"
-          : "bg-linear-to-br from-gray-200 to-gray-300 text-gray-600 shadow-sm"
-      }`}
-      style={{ width: size, height: size, fontSize: size * 0.3 }}
-    >
-      {getInitials(name)}
-    </div>
-  );
-};
 
 const STATUS_BADGE: Record<Match["status"], { label: string; className: string } | null> = {
   upcoming: null,

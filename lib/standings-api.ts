@@ -5,20 +5,30 @@ import {
 } from '@/data/league-table'
 import type { Competition } from '@/data/matches'
 import { parseForm } from '@/lib/league-form'
-import { payloadFetch } from '@/lib/payload-rest'
+import { payloadFetch, resolveMediaUrl } from '@/lib/payload-rest'
 import type { PayloadListResponse } from '@/lib/payload-rest'
-import type { Standing } from '@/payload-types'
+import type { Club, Standing } from '@/payload-types'
 
 type StandingRow = NonNullable<Standing['rows']>[number]
+
+/** Field relationship chỉ là doc đầy đủ khi gọi với `depth >= 1`; `depth=0` trả về ID. */
+function toClub(value: string | Club | null | undefined): Club | null {
+  return value && typeof value === 'object' ? value : null
+}
 
 function mapRow(row: StandingRow): LeagueTableEntry {
   const gf = row.goalsFor
   const ga = row.goalsAgainst
 
+  const club = toClub(row.club)
+  // `row.team` là tên đội của các bảng nhập trước khi có collection `clubs`
+  const team = club?.name || row.team || 'Chưa xác định'
+
   return {
     position: row.position,
-    team: row.team,
-    shortName: row.shortName?.trim() || row.team,
+    team,
+    shortName: row.shortName?.trim() || team,
+    logo: (club && (resolveMediaUrl(club.logo) || club.logoUrl)) || undefined,
     played: row.played,
     won: row.won,
     drawn: row.drawn,
@@ -43,6 +53,8 @@ export async function getLeagueStandings(
     'where[competition][equals]': competition,
     sort: '-season',
     limit: '1',
+    // depth 2: 1 cấp cho row -> club, 1 cấp nữa cho club -> logo (ảnh upload)
+    depth: '2',
   })
 
   try {

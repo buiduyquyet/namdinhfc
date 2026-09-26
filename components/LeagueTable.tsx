@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 
+import TeamLogo from "@/components/TeamLogo";
 import { type LeagueTableEntry, type MatchResult, TEAM_NAME } from "@/data/league-table";
 import { LETTER_BY_RESULT, RESULT_LABEL } from "@/lib/league-form";
 
@@ -35,6 +36,9 @@ const HEAD_CELL = "py-3 text-xs";
 const HEAD_MUTED = `${HEAD_CELL} px-2 text-center font-semibold text-gray-500`;
 const BODY_CELL = "py-3 text-sm";
 const BODY_STAT = `${BODY_CELL} px-2 text-center text-gray-600`;
+
+/** Logo trong bảng vừa đủ cao bằng một dòng chữ, không làm hàng giãn ra. */
+const LOGO_SIZE = 22;
 
 const LeagueTable = ({ teams, limit, highlightedTeam = TEAM_NAME }: LeagueTableProps) => {
   const rows = pickRows(teams, limit, highlightedTeam);
@@ -92,7 +96,10 @@ const LeagueTable = ({ teams, limit, highlightedTeam = TEAM_NAME }: LeagueTableP
                       isHighlighted ? "font-bold text-secondary" : "text-gray-700"
                     }`}
                   >
-                    {team.shortName}
+                    <div className="flex items-center gap-2">
+                      <TeamLogo name={team.team} logo={team.logo} size={LOGO_SIZE} bare />
+                      <span className="truncate">{team.shortName}</span>
+                    </div>
                   </td>
                   <td className={BODY_STAT}>{team.played}</td>
                   <td className={BODY_STAT}>{team.gd > 0 ? `+${team.gd}` : team.gd}</td>

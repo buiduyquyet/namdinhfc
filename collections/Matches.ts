@@ -1,19 +1,72 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionConfig, PayloadRequest } from 'payload'
 
+import { TEAM_NAME } from '@/data/matches'
 import { COMPETITION_OPTIONS } from '@/lib/competition'
+
+/** Lấy tên đội từ giá trị field relationship — có thể là ID hoặc doc đã populate. */
+async function resolveClubName(req: PayloadRequest, value: unknown): Promise<string> {
+  if (!value) return ''
+
+  if (typeof value === 'object' && value !== null && 'name' in value) {
+    return String((value as { name?: unknown }).name ?? '')
+  }
+
+  try {
+    const club = await req.payload.findByID({ collection: 'clubs', id: String(value), depth: 0 })
+    return club?.name ?? ''
+  } catch {
+    return ''
+  }
+}
+
+/**
+ * Tiêu đề hiển thị trong admin, ví dụ "Thép Xanh Nam Định vs Hà Nội".
+ * Field relationship không dùng làm `useAsTitle` được nên phải "đóng băng" tên đội
+ * vào một ô text mỗi lần lưu (cùng cách làm với collection Standings).
+ */
+const fillTitle: CollectionBeforeChangeHook = async ({ data, req }) => {
+  const [homeClubName, awayClubName] = await Promise.all([
+    resolveClubName(req, data.homeClub),
+    resolveClubName(req, data.awayClub),
+  ])
+
+  const home = homeClubName || data.homeTeam || ''
+  const away = awayClubName || data.awayTeam || ''
+
+  return { ...data, title: home && away ? `${home} vs ${away}` : home || away || 'Trận đấu' }
+}
+
+/** Mặc định đội nhà là CLB của chúng ta — tìm theo tên trong collection `clubs`. */
+const defaultHomeClub = async ({ req }: { req: PayloadRequest }) => {
+  try {
+    const found = await req.payload.find({
+      collection: 'clubs',
+      where: { name: { equals: TEAM_NAME } },
+      limit: 1,
+      depth: 0,
+    })
+    return found.docs[0]?.id
+  } catch {
+    return undefined
+  }
+}
 
 export const Matches: CollectionConfig = {
   slug: 'matches',
+  labels: { singular: 'Trận đấu', plural: 'Trận đấu' },
   access: {
     // Trang Lịch thi đấu là trang public nên cần mở quyền đọc
     read: () => true,
   },
   admin: {
-    useAsTitle: 'awayTeam',
-    defaultColumns: ['date', 'homeTeam', 'awayTeam', 'competition', 'status'],
+    useAsTitle: 'title',
+    defaultColumns: ['date', 'homeClub', 'awayClub', 'competition', 'status'],
+    description: 'Đội nhà / đội khách chọn từ collection Đội bóng — logo đi theo đội, không nhập lại ở đây.',
   },
   defaultSort: '-date',
+  hooks: { beforeChange: [fillTitle] },
   fields: [
+    { name: 'title', type: 'text', label: 'Tiêu đề', admin: { hidden: true } },
     {
       name: 'date',
       type: 'date',
@@ -23,10 +76,35 @@ export const Matches: CollectionConfig = {
         date: { pickerAppearance: 'dayAndTime', displayFormat: 'dd/MM/yyyy HH:mm' },
       },
     },
-    { name: 'homeTeam', type: 'text', required: true, label: 'Đội nhà', defaultValue: 'Thép Xanh Nam Định' },
-    { name: 'awayTeam', type: 'text', required: true, label: 'Đội khách' },
-    { name: 'homeLogo', type: 'upload', relationTo: 'media', label: 'Logo đội nhà' },
-    { name: 'awayLogo', type: 'upload', relationTo: 'media', label: 'Logo đội khách' },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'homeClub',
+          type: 'relationship',
+          relationTo: 'clubs',
+          required: true,
+          label: 'Đội nhà',
+          defaultValue: defaultHomeClub,
+          admin: { width: '50%' },
+        },
+        {
+          name: 'awayClub',
+          type: 'relationship',
+          relationTo: 'clubs',
+          required: true,
+          label: 'Đội khách',
+          admin: { width: '50%' },
+        },
+      ],
+    },
+    /**
+     * Hai ô text của thời kỳ trước collection `clubs`. Giữ lại để các trận cũ vẫn
+     * hiện đúng tên đội ngoài trang public; trận mới luôn dùng `homeClub`/`awayClub`.
+     * Khi mọi trận đã chọn đội bóng thì xoá được hai field này.
+     */
+    { name: 'homeTeam', type: 'text', label: 'Đội nhà (dữ liệu cũ)', admin: { hidden: true, readOnly: true } },
+    { name: 'awayTeam', type: 'text', label: 'Đội khách (dữ liệu cũ)', admin: { hidden: true, readOnly: true } },
     {
       name: 'competition',
       type: 'select',

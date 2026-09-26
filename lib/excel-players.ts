@@ -1,5 +1,7 @@
 import ExcelJS from 'exceljs'
 
+import { normalizeText as normalize } from '@/lib/normalize-text'
+
 export type PlayerPosition = 'Thủ môn' | 'Hậu vệ' | 'Tiền vệ' | 'Tiền đạo'
 
 /** Một dòng Excel đã được chuẩn hoá thành dữ liệu cầu thủ. */
@@ -42,17 +44,6 @@ const COLUMNS = [
 ] as const
 
 type ColumnKey = (typeof COLUMNS)[number]['key']
-
-/** Bỏ dấu tiếng Việt + hạ chữ thường để so khớp tiêu đề cột và vị trí dễ dãi hơn. */
-function normalize(value: string): string {
-  return value
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/đ/gi, 'd')
-    .toLowerCase()
-    .replace(/\s+/g, ' ')
-    .trim()
-}
 
 const POSITION_BY_ALIAS: Record<string, PlayerPosition> = {
   'thu mon': 'Thủ môn',

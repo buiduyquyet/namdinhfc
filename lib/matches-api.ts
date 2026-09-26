@@ -9,7 +9,7 @@ import {
 import { toVietnamDateParts } from '@/lib/format-date'
 import { payloadFetch, resolveMediaUrl } from '@/lib/payload-rest'
 import type { PayloadListResponse } from '@/lib/payload-rest'
-import type { Match as PayloadMatch } from '@/payload-types'
+import type { Club, Match as PayloadMatch } from '@/payload-types'
 
 /** Trạng thái tiếng Việt trong CMS → trạng thái nội bộ của UI. */
 const STATUS_BY_LABEL: Record<PayloadMatch['status'], MatchStatus> = {
@@ -19,24 +19,42 @@ const STATUS_BY_LABEL: Record<PayloadMatch['status'], MatchStatus> = {
   'Bị hoãn': 'postponed',
 }
 
+/** Field relationship chỉ là doc đầy đủ khi gọi với `depth >= 1`; `depth=0` trả về ID. */
+function toClub(value: string | Club | null | undefined): Club | null {
+  return value && typeof value === 'object' ? value : null
+}
+
+/** Logo đội lấy từ collection `clubs`: ưu tiên ảnh upload, sau đó tới link ngoài. */
+function clubLogo(club: Club | null): string | undefined {
+  if (!club) return undefined
+  return resolveMediaUrl(club.logo) || club.logoUrl || undefined
+}
+
 function mapMatch(doc: PayloadMatch): Match {
   const { date, time } = toVietnamDateParts(doc.date)
 
+  const homeClub = toClub(doc.homeClub)
+  const awayClub = toClub(doc.awayClub)
+
+  // `homeTeam`/`awayTeam` là dữ liệu của các trận nhập trước khi có collection `clubs`
+  const homeTeam = homeClub?.name || doc.homeTeam || 'Chưa xác định'
+  const awayTeam = awayClub?.name || doc.awayTeam || 'Chưa xác định'
+
   return {
     id: doc.id.toString(),
-    homeTeam: doc.homeTeam,
-    awayTeam: doc.awayTeam,
+    homeTeam,
+    awayTeam,
     homeScore: doc.homeScore ?? undefined,
     awayScore: doc.awayScore ?? undefined,
     date,
     time,
-    venue: doc.stadium || 'Chưa xác định',
+    venue: doc.stadium || homeClub?.stadium || 'Chưa xác định',
     competition: doc.competition as Competition,
     status: STATUS_BY_LABEL[doc.status],
     matchday: doc.matchday ?? undefined,
-    isHomeGame: doc.homeTeam === TEAM_NAME,
-    homeLogo: resolveMediaUrl(doc.homeLogo) || undefined,
-    awayLogo: resolveMediaUrl(doc.awayLogo) || undefined,
+    isHomeGame: homeTeam === TEAM_NAME,
+    homeLogo: clubLogo(homeClub),
+    awayLogo: clubLogo(awayClub),
     ticketUrl: doc.ticketUrl || undefined,
     highlightUrl: doc.highlightUrl || undefined,
   }
@@ -66,7 +84,8 @@ export async function getMatches({
 
   const params = new URLSearchParams({
     sort: group === 'finished' ? '-date' : 'date',
-    depth: '1',
+    // depth 2: 1 cấp cho match -> club, 1 cấp nữa cho club -> logo (ảnh upload)
+    depth: '2',
     limit: String(limit),
   })
 
