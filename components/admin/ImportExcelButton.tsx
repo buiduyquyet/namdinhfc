@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation'
 interface ImportResult {
   success: boolean
   error?: string
+  /** Câu tóm tắt riêng của endpoint (VD: import bảng xếp hạng), hiện dưới dòng thống kê. */
+  message?: string
   totalRows?: number
   inserted?: number
   /** Chỉ có ở những endpoint ghi đè bản ghi cũ (VD: import đội bóng). */
@@ -122,22 +124,25 @@ const ImportExcelButton = ({
                 {result.skipped?.length ?? 0}, lỗi {result.errors?.length ?? 0}.
               </strong>
 
+              {result.message && <p style={{ margin: '0.5rem 0 0' }}>{result.message}</p>}
+
               {!!result.skipped?.length && (
                 <p style={{ margin: '0.5rem 0 0' }}>
                   Bỏ qua vì {skipReason}: {result.skipped.map((item) => item.name).join(', ')}
                 </p>
               )}
-
-              {!!result.errors?.length && (
-                <ul style={{ margin: '0.5rem 0 0', paddingLeft: '1.25rem', color: '#ef4444' }}>
-                  {result.errors.map((item) => (
-                    <li key={item.rowNumber}>
-                      Dòng {item.rowNumber}: {item.message}
-                    </li>
-                  ))}
-                </ul>
-              )}
             </>
+          )}
+
+          {/* Endpoint kiểu "được ăn cả" (import BXH) trả lỗi từng dòng kèm `success: false` */}
+          {!!result.errors?.length && (
+            <ul style={{ margin: '0.5rem 0 0', paddingLeft: '1.25rem', color: '#ef4444' }}>
+              {result.errors.map((item, index) => (
+                <li key={`${item.rowNumber}-${index}`}>
+                  Dòng {item.rowNumber}: {item.message}
+                </li>
+              ))}
+            </ul>
           )}
         </div>
       )}

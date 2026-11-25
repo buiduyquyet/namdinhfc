@@ -18,8 +18,7 @@ app/
     admin/[[...segments]]/page.tsx
     api/[...slug]/route.ts      # REST + GraphQL của Payload
   api/               # Route handler nghiệp vụ riêng (không phải của Payload)
-    import-players/, import-clubs/
-    cron/sync-vpf/   #   đồng bộ V.League 1 từ vpf.vn — Vercel Cron (GET + CRON_SECRET) và nút trong admin (POST)
+    import-players/
   globals.css        # Design system duy nhất của toàn site
 
 collections/         # Payload collections: Users, Players, News, Matches, Media
@@ -73,9 +72,7 @@ public/              # Ảnh tĩnh; `public/media` là nơi Payload lưu file up
 - `NEXT_PUBLIC_SERVER_URL` quyết định page đọc dữ liệu từ đâu. Khi dev ở máy phải đặt `http://localhost:3000/`,
   nếu trỏ về site đã deploy thì trang sẽ đọc **schema của bản deploy** — collection mới thêm trả 403 cho tới khi deploy.
 - `getPayload({ config })` chỉ dùng trong `app/api/**/route.ts` (server-side write).
-- **Nguồn dữ liệu cầu thủ / trận đấu là Payload CMS** (nhập tay trong admin hoặc import Excel). Không tích hợp API bóng đá bên thứ ba — dữ liệu của họ không chính xác, đã gỡ bỏ.
-  Ngoại lệ duy nhất là **vpf.vn (nguồn chính thức của giải)**: `lib/vpf-sync.ts` đọc HTML trang mùa giải và **ghi vào CMS**
-  (trận của CLB + bảng xếp hạng V.League 1), trang public vẫn chỉ đọc từ CMS. Selector HTML của VPF chỉ nằm ở `lib/vpf-parser.ts`.
+- **Nguồn dữ liệu cầu thủ / trận đấu là Payload CMS** (nhập tay trong admin hoặc import Excel). Không tích hợp API bóng đá bên ngoài — dữ liệu của họ không chính xác, đã gỡ bỏ.
 - **Luôn có fallback**: lỗi fetch → `console.error` + trả mảng rỗng / dữ liệu tĩnh, không để page crash (xem `lib/matches-api.ts`, `lib/payload-api.ts`).
   Phân biệt rõ: **API lỗi** → fallback `data/*.ts`; **API trả 0 bản ghi** → trả rỗng để UI hiện empty state, không dựng dữ liệu giả (xem `lib/matches-api.ts`).
 - Ngày giờ từ Payload là UTC. Đổi sang giờ Việt Nam bằng helper trong `lib/format-date.ts`, **không** dùng `new Date(x).getHours()` trực tiếp.
@@ -134,7 +131,7 @@ Section nền tối/gradient → dùng `<SectionDark>` (bọc sẵn `SectionBack
 
 - Commit message theo mẫu đang dùng: `[Fix]: ...`, `[Update]: ...`, `[Refactor]: ...` (hoặc `fix: ...`). Nội dung tiếng Anh.
 - Branch chính: `master`.
-- **Không commit `.env`** (đã ignore). Biến môi trường đang dùng: `MONGODB_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, `BLOB_READ_WRITE_TOKEN`, `CRON_SECRET` (Vercel Cron đồng bộ VPF).
+- **Không commit `.env`** (đã ignore). Biến môi trường đang dùng: `MONGODB_URI`, `PAYLOAD_SECRET`, `NEXT_PUBLIC_SERVER_URL`, `BLOB_READ_WRITE_TOKEN`.
 
 ## 5. Lệnh
 

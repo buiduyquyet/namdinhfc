@@ -54,8 +54,11 @@ const COLUMNS = [
 
 type ColumnKey = (typeof COLUMNS)[number]['key']
 
-/** Đọc giá trị cell về dạng chuỗi, xử lý cả cell công thức, hyperlink và rich text. */
-function cellToString(cell: ExcelJS.Cell | undefined): string {
+/**
+ * Đọc giá trị cell về dạng chuỗi, xử lý cả cell công thức, hyperlink và rich text.
+ * Dùng chung với `lib/excel-standings.ts`.
+ */
+export function cellToString(cell: ExcelJS.Cell | undefined): string {
   const value = cell?.value
 
   if (value === null || value === undefined) return ''

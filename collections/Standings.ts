@@ -62,7 +62,11 @@ export const Standings: CollectionConfig = {
     useAsTitle: 'title',
     defaultColumns: ['title', 'matchday', 'updatedAt'],
     description:
-      'Mỗi mùa giải của một giải đấu là một bản ghi. Trang chủ hiển thị bảng V.League 1 của mùa mới nhất.',
+      'Mỗi mùa giải của một giải đấu là một bản ghi. Trang chủ hiển thị bảng V.League 1 của mùa mới nhất. ' +
+      'Import Excel sẽ ghi đè toàn bộ các đội của mùa ghi trong file — có thể copy bảng từ vpf.vn dán vào file mẫu.',
+    components: {
+      beforeList: ['@/components/admin/ImportStandingsButton'],
+    },
   },
   defaultSort: '-season',
   hooks: { beforeChange: [fillTitle] },

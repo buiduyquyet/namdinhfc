@@ -67,18 +67,7 @@ export function toVietnamDateParts(value: string): { date: string; time: string 
   }
 }
 
-/**
- * Chiều ngược lại của `toVietnamDateParts`: ngày `YYYY-MM-DD` + giờ `HH:mm` **theo giờ
- * Việt Nam** → chuỗi ISO UTC để lưu vào Payload. Việt Nam không đổi giờ theo mùa nên
- * cộng cố định +07:00 là đúng quanh năm.
- */
-export function vietnamTimeToISO(date: string, time: string): string {
-  const parsed = new Date(`${date}T${time}:00+07:00`)
-  if (Number.isNaN(parsed.getTime())) throw new Error(`Ngày giờ không hợp lệ: ${date} ${time}`)
-  return parsed.toISOString()
-}
-
-const MONTH_FORMATTER =new Intl.DateTimeFormat('vi-VN', {
+const MONTH_FORMATTER = new Intl.DateTimeFormat('vi-VN', {
   month: 'long',
   year: 'numeric',
   timeZone: 'Asia/Ho_Chi_Minh',
