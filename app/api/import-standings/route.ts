@@ -4,16 +4,10 @@ import { getPayload } from 'payload'
 import config from '@/payload.config'
 import type { RowError } from '@/lib/excel-clubs'
 import { parseStandingsWorkbook } from '@/lib/excel-standings'
-import { normalizeText } from '@/lib/normalize-text'
-import type { Club, Standing } from '@/payload-types'
+import { clubId, clubKey } from '@/lib/club-key'
+import type { Standing } from '@/payload-types'
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024
-
-/** Khớp tên đội "dễ dãi": bỏ dấu và mọi ký tự không phải chữ/số — "Thể Công – Viettel" = "The Cong - Viettel". */
-const clubKey = (name: string) => normalizeText(name).replace(/[^a-z0-9]/g, '')
-
-/** Field relationship ở `depth: 0` là ID, ở depth cao hơn là doc. */
-const relationId = (value: string | Club) => (typeof value === 'string' ? value : value.id)
 
 const fail = (error: string, status: number, errors: RowError[] = []) =>
   NextResponse.json({ success: false, error, errors }, { status })
@@ -66,7 +60,7 @@ export async function POST(req: NextRequest) {
     const doc = existing.docs[0]
 
     // File không có "Tên ngắn" / "Phong độ" thì giữ giá trị admin đã nhập trước đó
-    const previous = new Map((doc?.rows ?? []).map((row) => [relationId(row.club), row]))
+    const previous = new Map((doc?.rows ?? []).map((row) => [clubId(row.club), row]))
 
     const rows: NonNullable<Standing['rows']> = parsed.rows.map((row) => {
       const club = clubByKey.get(clubKey(row.team))!.id
