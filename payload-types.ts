@@ -283,6 +283,10 @@ export interface News {
 export interface Club {
   id: string;
   name: string;
+  /**
+   * Chỉ điền khi tên trên vpf.vn khác hẳn "Tên đội" (VD: đội đổi tên). Khác dấu, hoa thường, gạch ngang hay dấu chấm thì không cần điền.
+   */
+  vpfName?: string | null;
   league: 'V.League 1' | 'Hạng Nhất Quốc gia' | 'Khác';
   season?: string | null;
   logo?: (string | null) | Media;
@@ -300,7 +304,7 @@ export interface Club {
   createdAt: string;
 }
 /**
- * Đội nhà / đội khách chọn từ collection Đội bóng — logo đi theo đội, không nhập lại ở đây.
+ * Đội nhà / đội khách chọn từ collection Đội bóng — logo đi theo đội, không nhập lại ở đây. Trận V.League 1 được tự đồng bộ từ vpf.vn sáng thứ 3 hằng tuần (xem Cấu hình trang).
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "matches".
@@ -540,6 +544,7 @@ export interface NewsSelect<T extends boolean = true> {
  */
 export interface ClubsSelect<T extends boolean = true> {
   name?: T;
+  vpfName?: T;
   league?: T;
   season?: T;
   logo?: T;
@@ -669,6 +674,18 @@ export interface SiteSetting {
    * Trang Đội hình chỉ hiển thị cầu thủ có Nguồn dữ liệu trùng với lựa chọn này. Chọn "Tất cả các nguồn" để không lọc.
    */
   playerDataSource: 'all' | 'excel' | 'manual';
+  /**
+   * Sáng thứ 3 hằng tuần hệ thống tự lấy kết quả các trận của CLB và bảng xếp hạng V.League 1 từ vpf.vn.
+   */
+  vpfSync?: {
+    /**
+     * Sang mùa mới thì đổi link này, VD: https://vpf.vn/season/v-league-2028/
+     */
+    seasonUrl?: string | null;
+    lastRunAt?: string | null;
+    lastStatus?: ('success' | 'error') | null;
+    lastMessage?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -678,6 +695,14 @@ export interface SiteSetting {
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
   playerDataSource?: T;
+  vpfSync?:
+    | T
+    | {
+        seasonUrl?: T;
+        lastRunAt?: T;
+        lastStatus?: T;
+        lastMessage?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

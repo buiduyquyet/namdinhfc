@@ -61,7 +61,12 @@ export const Matches: CollectionConfig = {
   admin: {
     useAsTitle: 'title',
     defaultColumns: ['date', 'homeClub', 'awayClub', 'competition', 'status'],
-    description: 'Đội nhà / đội khách chọn từ collection Đội bóng — logo đi theo đội, không nhập lại ở đây.',
+    description:
+      'Đội nhà / đội khách chọn từ collection Đội bóng — logo đi theo đội, không nhập lại ở đây. ' +
+      'Trận V.League 1 được tự đồng bộ từ vpf.vn sáng thứ 3 hằng tuần (xem Cấu hình trang).',
+    components: {
+      beforeList: [{ path: '@/components/admin/SyncVpfButton', clientProps: { inList: true } }],
+    },
   },
   defaultSort: '-date',
   hooks: { beforeChange: [fillTitle] },

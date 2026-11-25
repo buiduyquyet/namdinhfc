@@ -32,6 +32,15 @@ export const Clubs: CollectionConfig = {
   fields: [
     { name: 'name', type: 'text', required: true, unique: true, index: true, label: 'Tên đội' },
     {
+      name: 'vpfName',
+      type: 'text',
+      label: 'Tên trên VPF',
+      admin: {
+        description:
+          'Chỉ điền khi tên trên vpf.vn khác hẳn "Tên đội" (VD: đội đổi tên). Khác dấu, hoa thường, gạch ngang hay dấu chấm thì không cần điền.',
+      },
+    },
+    {
       type: 'row',
       fields: [
         {
